@@ -12,5 +12,16 @@ export const cookieExtractor = (req) =>{
     return token;
 }
 
+export const generateToken = (user) => {
+    const token = jwt.sign({ user }, config.jwtSecret, { expiresIn: '24h' });
+    return token;
+}
+
+export const createHash = (password) => bcrypt.hashSync(password, bcrypt.genSaltSync(10));
+
+export const isValidPassword = (user, password) => {
+    return bcrypt.compareSync(password, user.password);
+}
+
 const __filename = fileURLToPath(import.meta.url);
 export const __dirname = dirname(__filename);
