@@ -1,0 +1,421 @@
+#abonoInput {
+  font-size: 20px;
+  padding: 6px; }
+  #abonoInput::-webkit-inner-spin-button, #abonoInput ::-webkit-outer-spin-button {
+    appearance: none; }
+
+#divChange {
+  display: flex;
+  flex-flow: row nowrap;
+  width: 100%;
+  justify-content: space-around; }
+
+.container-home {
+  display: flex;
+  flex-flow: row nowrap;
+  height: 100%; }
+
+.body-each-prod {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-around;
+  width: 100%; }
+
+.body-home {
+  display: grid;
+  width: 100%;
+  grid-template-rows: 10% 30% 60%;
+  grid-template-columns: 70% 30%;
+  grid-template-areas: 'input input' 'result total' 'table total'; }
+
+.btn {
+  border: none; }
+  .btn-check {
+    color: #009309;
+    font-size: 20px;
+    background-color: transparent;
+    cursor: pointer; }
+  .btn-remove {
+    color: red;
+    height: fit-content; }
+  .btn-add-prod {
+    background-color: black;
+    color: #fff;
+    padding: 4px;
+    border-radius: 4px;
+    margin: auto;
+    cursor: pointer; }
+  .btn-end-purchase {
+    background-color: blue;
+    color: #fff;
+    border-radius: 6px;
+    padding: 6px;
+    cursor: pointer; }
+  .btn-quantity {
+    cursor: pointer;
+    background-color: transparent; }
+  .btn-empty {
+    padding: 5px;
+    border-radius: 4px;
+    color: #fff;
+    background-color: red;
+    cursor: pointer; }
+  .btn-add {
+    margin: auto; }
+    .btn-add button {
+      background-color: black;
+      color: #fff;
+      padding: 5px;
+      border-radius: 6px; }
+
+.div-pay-client {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center; }
+  .div-pay-client input {
+    border: 1px solid black;
+    width: 50%;
+    height: 40px; }
+  .div-pay-client label {
+    font-size: 18px; }
+
+.div-span-info {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: end;
+  gap: 8px; }
+
+.div-btn-empty {
+  margin: auto; }
+
+.div-btn-quantity {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-around; }
+
+.div-each-prod {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 7px;
+  text-align: center;
+  padding: 8px;
+  border-radius: 6px; }
+
+.div-input-search {
+  grid-area: input;
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+  align-items: center;
+  border-bottom: 1px solid black; }
+  .div-input-search-checkbox {
+    justify-self: flex-end; }
+  .div-input-search input {
+    margin: auto; }
+
+.div-show-results {
+  grid-area: result;
+  display: flex;
+  flex-flow: column wrap;
+  gap: 14px;
+  margin-top: 2rem;
+  overflow-y: auto; }
+
+.table {
+  grid-area: table;
+  display: flex;
+  flex-flow: column nowrap; }
+  .table-search {
+    border-collapse: separate;
+    border-spacing: 0 12px; }
+    .table-search th {
+      font-size: 20px; }
+  .table-cart {
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    margin: auto;
+    width: 100%;
+    border-top: 1px solid black; }
+    .table-cart th {
+      font-size: 24px; }
+    .table-cart tr {
+      border: none; }
+
+.body-info-total {
+  height: 100%;
+  border-left: 1px solid black;
+  grid-area: total;
+  padding: 20px; }
+
+.td-button {
+  display: flex; }
+
+.info-total {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  gap: 15px; }
+  .info-total span {
+    padding: 0 !important;
+    font-size: 34px; }
+
+.tr-results {
+  background-color: #c7c7c7;
+  font-size: 20px;
+  color: #000000; }
+
+.tr-each-prod {
+  margin: 18px 0; }
+
+#totalPrice {
+  font-weight: bold; }
+
+.nav {
+  display: flex;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 200px;
+  border-right: 1px solid black; }
+  .nav-user-inicio {
+    margin-bottom: 3rem;
+    font-size: 22px; }
+    .nav-user-inicio a {
+      text-decoration: none;
+      color: #000000; }
+  .nav-options {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-around;
+    height: 400px; }
+    .nav-options-admin-li {
+      margin: 6px 0; }
+      .nav-options-admin-li a {
+        color: #000000;
+        text-decoration: none; }
+
+.btn-logout {
+  border: none;
+  cursor: pointer;
+  background-color: midnightblue;
+  border-radius: 6px;
+  padding: 4px;
+  color: #fff;
+  margin-top: 12px; }
+
+.div-prods-update {
+  margin-top: 3rem;
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 12px; }
+
+.options-body {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
+  height: 50vh; }
+
+.options-ul {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 12px; }
+
+.options-li {
+  width: 100%;
+  background-color: black;
+  text-align: center;
+  padding: 8px;
+  border-radius: 6px; }
+
+.options-button {
+  color: #fff;
+  font-size: 24px;
+  text-decoration: none; }
+
+.hidden {
+  display: hidden; }
+
+.container-update {
+  display: flex;
+  flex-flow: column wrap;
+  align-content: center;
+  flex: 1;
+  margin-top: 3rem; }
+  .container-update h3 {
+    font-size: 26px;
+    margin-bottom: 3rem; }
+
+.each-link-prod {
+  width: fit-content; }
+  .each-link-prod a {
+    font-size: 18px;
+    text-decoration: none; }
+
+.div-paginate-pages {
+  display: flex;
+  justify-content: space-around; }
+
+.container-prod {
+  display: flex;
+  width: 100%; }
+
+.div-prod {
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: center;
+  align-content: center;
+  width: 100%; }
+
+.each-field-update {
+  display: flex;
+  flex-flow: row nowrap;
+  width: 400px; }
+  .each-field-update-text {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    width: 100%;
+    margin: 10px 0; }
+    .each-field-update-text span {
+      font-size: 24px;
+      font-weight: bold; }
+  .each-field-update-input {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    width: 100%;
+    margin: 10px 0; }
+
+.hide {
+  display: none; }
+
+.btn-edit-prod {
+  background-color: transparent;
+  cursor: pointer;
+  border: none; }
+
+.btn-update-prod {
+  background-color: green;
+  cursor: pointer; }
+
+.div-btn-back {
+  display: flex;
+  flex-wrap: wrap;
+  height: 50vh;
+  justify-content: center;
+  align-content: center;
+  margin-left: 3rem; }
+
+.div-order {
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: center;
+  align-content: center;
+  flex: 1;
+  margin: auto;
+  width: fit-content;
+  height: fit-content;
+  gap: 16px; }
+  .div-order h4 {
+    font-size: 20px; }
+
+.div-prods {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-items: center;
+  align-items: center;
+  border: 1px solid black; }
+
+.span-amount {
+  text-align: center;
+  font-size: 24px; }
+
+.div-usuario {
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: center;
+  align-content: center;
+  width: 100%;
+  gap: 16px; }
+  .div-usuario-field {
+    display: flex;
+    flex-flow: row nowrap;
+    width: 300px;
+    justify-content: space-between; }
+
+.hide {
+  display: none; }
+
+.div-pag-error {
+  display: flex;
+  flex-flow: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
+  height: 100vh; }
+  .div-pag-error h4 {
+    font-size: 30px;
+    margin-bottom: 16px; }
+  .div-pag-error a {
+    text-decoration: none;
+    text-align: center; }
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0; }
+
+html {
+  height: 100vh; }
+
+body {
+  height: 100%; }
+
+li {
+  list-style: none; }
+
+.body-form {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-content: center;
+  height: 100vh;
+  width: 100%; }
+  .body-form h3 {
+    text-align: center;
+    font-size: 26px; }
+
+.form {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 8px;
+  background-color: #C8C8C8;
+  padding: 8px;
+  border-radius: 6px;
+  width: 300px;
+  margin-top: 15px;
+  align-self: center; }
+  .form-field {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between; }
+    .form-field label {
+      text-align: center;
+      font-size: 24px;
+      color: #000000; }
+  .form-button {
+    display: flex;
+    justify-content: center; }
+    .form-button button {
+      border: none;
+      color: #fff;
+      background-color: #0a0a38;
+      padding: 5px;
+      border-radius: 3px;
+      font-size: 16px;
+      cursor: pointer; }
+
+.div-error {
+  text-align: center;
+  color: red; }

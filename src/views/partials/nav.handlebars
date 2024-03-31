@@ -1,0 +1,26 @@
+<nav class="nav">
+    <ul class="nav-options">
+        {{#if user}}
+        <div class="nav-user">
+            {{#if btnInicio}}
+            <li class="nav-user-inicio"><a href="/">Inicio</a></li>
+            {{/if}}
+            <li class="nav-user-field">Usuario: {{user.name}}</li>
+            <button onclick="logOut(event)" class="btn btn-logout">Cerrar sesión</button>
+        </div>
+        <div class="nav-options-admin">
+        {{#if admin}}
+            <li class="nav-options-admin-li"><a href="/create/prod">Agregar producto</a></li>
+            <li class="nav-options-admin-li"><a href="/update/prod">Actualizar producto</a></li>
+            <li class="nav-options-admin-li"><a href="/create/user">Agregar usuario</a></li>
+            <li class="nav-options-admin-li"><a href="/update/user">Actualizar usuario</a></li>
+            <li class="nav-options-admin-li"><a href="/show/summaries/monthly">Ver resumen del mes</a></li>
+            <li class="nav-options-admin-li"><a href="/show/summaries/diary">Ver resumen del día</a></li>
+        {{/if}}
+            <li class="nav-options-admin-li"><a href="/orders">Ver ventas</a></li>
+        </div>
+        {{/if}}
+    </ul>
+</nav>
+
+<script src="/js/form.js"></script>

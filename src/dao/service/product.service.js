@@ -1,12 +1,21 @@
 import { productModel } from "../models/product.model.js";
 
 export default class  ProductManager{
-    static async getAll(){
-        return await productModel.find().lean();    
+    static async getAll(page){
+        const {docs, hasPrevPage, hasNextPage, prevPage, nextPage, totalPages} = await productModel.paginate({}, {lean: true, limit: 12, page});
+        return {docs, hasPrevPage, hasNextPage, prevPage, nextPage, totalPages, page};    
+    }
+
+    static async getSearch(){
+        return await productModel.find().lean();
     }
 
     static async getById(id){
         return await productModel.findById(id).lean();
+    }
+
+    static async getBy(key, value){
+        return await productModel.findOne({[key]:value}).lean()
     }
 
     static async create(prod){

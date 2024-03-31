@@ -1,0 +1,40 @@
+.div{
+
+    &-btn-back{
+        display: flex;
+        flex-wrap: wrap;
+        height: 50vh;
+        justify-content: center;
+        align-content: center;
+        margin-left: 3rem;
+    }
+
+    &-order{
+        display: flex;
+        flex-flow: column wrap;
+        justify-content: center;
+        align-content: center;
+        flex: 1;
+        margin: auto;
+        width: fit-content;
+        height: fit-content;
+        gap: 16px;
+
+        & h4{
+            font-size: 20px;
+        }
+    }
+
+    &-prods{
+        display: flex;
+        flex-flow: column nowrap;
+        justify-items: center;
+        align-items: center;
+        border: 1px solid black;
+    }
+}
+
+.span-amount{
+    text-align: center;
+    font-size: 24px;
+}

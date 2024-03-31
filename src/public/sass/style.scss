@@ -1,0 +1,86 @@
+@import 'pages/home';
+@import 'pages/nav';
+@import 'pages/panel';
+@import 'pages/pagination';
+@import 'pages/showprod';
+@import 'pages/order';
+@import 'pages/showuser';
+@import 'pages/error';
+
+*{
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+html{
+    height: 100vh;
+}
+
+body{
+    height: 100%;
+}
+
+li{
+    list-style: none;
+}
+
+// FORMULARIOS LOGIN, REGISTRO Y PANEL DEL ADMIN
+.body-form{
+    display: flex;
+    flex-flow: column nowrap;
+    
+    justify-content: center;
+    align-content: center;
+    height: 100vh;
+    width: 100%;
+
+    & h3{
+        text-align: center;
+        font-size: 26px;
+    }
+}
+
+.form{
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 8px;
+    background-color: #C8C8C8;
+    padding: 8px;
+    border-radius: 6px;
+    width: 300px;
+    margin-top: 15px;
+    align-self: center;
+    
+    &-field{
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: space-between;
+
+        & label{
+            text-align: center;
+            font-size: 24px;
+            color: #000000;
+        }
+    }
+
+    &-button{
+        display: flex;
+        justify-content: center;
+
+        & button{
+            border: none;
+            color: #fff;
+            background-color: rgb(10, 10, 56);
+            padding: 5px;
+            border-radius: 3px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    }
+}
+
+.div-error{
+    text-align: center;
+    color: red;
+}

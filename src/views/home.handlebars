@@ -1,0 +1,95 @@
+<div class="container-home">
+    {{> nav user=user admin=admin}}
+    <div class="body-home">
+
+        <div class="div-input-search">
+            <form id="divSearchCode">
+                <input type="text" id="inputSearch">
+                <button onclick="searchProd(event)">Buscar</button>
+            </form>
+
+            <div class="hide" id="divSearchTitle">
+                <input type="text" id="inputSearchTitle">
+            </div>
+
+            <div class="div-input-search-checkbox">
+                <label>Desactivar lector</label>
+                <input type="checkbox" id="checkboxSearch" onchange="changeTypeSearch(this, event)">
+            </div>
+        </div>
+
+
+        <div id="showResults" class="div-show-results">
+            <table class="table-search">
+                <thead>
+                    <tr>
+                        <th>Codigo</th>
+                        <th>Producto</th>
+                        <th>Stock</th>
+                        <th>Precio</th>
+                    </tr>
+                </thead>
+                <tbody id="bodySearch"></tbody>
+            </table>
+        </div>
+
+        <div id="cart" data-cart="{{user.cart._id}}" class="table">
+            <table class="table-cart">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Unitario</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyCart">
+                    {{#each carrito.products}}
+                    {{> itemcart prod=this}}
+                    {{/each}}
+                </tbody>
+            </table>
+            <div class="div-btn-empty">
+                <button class="btn btn-empty" onclick="emptyCart(event, '{{user.cart._id}}')">Vaciar</button>
+            </div>
+
+        </div>
+
+        <div class="body-info-total">
+            <div class="info-total">
+                <span>Total a pagar:</span>
+                <div class="div-span-info">
+                    <span>$</span><span id="totalPrice">{{total}}</span>
+                </div>
+                <div class="div-pay-client">
+                    <label>Abona:</label>
+                    <input type="number" id="abonoInput">
+                </div>
+                <button onclick="endSale(event)" class="btn btn-end-purchase">Realizar pago</button>
+                <div id="divChange"></div>
+            </div>
+
+            <div>
+                {{#unless summary}}
+                <div>
+                    <button onclick="showAlertStartDay(event)">Empezar el día</button>
+                </div>
+                {{/unless}}
+                {{#if summary}}
+                <div>
+                    <button onclick="finishDay(event)">Terminar el día</button>
+                </div>
+                {{/if}}
+                {{#if admin}}
+                <div>
+                    <button onclick="generateMonthlySummary(event)">Generar resumen del mes</button>
+                </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/searchBar.js"></script>
