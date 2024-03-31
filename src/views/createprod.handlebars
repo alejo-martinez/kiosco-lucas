@@ -1,0 +1,40 @@
+<div class="container-home">
+
+
+{{> nav user=user btnInicio=btnInicio}}
+<div class="body-form">
+    <h3>Crear producto</h3>
+    <form id="formAddProd" class="form">
+        <div class="form-field">
+            <label>Título</label>
+            <input type="text" name="title" id="titleInput">
+        </div>
+        <div class="form-field">
+            <label>Precio</label>
+            <input type="number" name="price">
+        </div>
+        <div class="form-field">
+            <label>Stock</label>
+            <input type="number" name="stock">
+        </div>
+        <div class="form-field">
+            <label>Total stock</label>
+            <input type="number" name="totalStock">
+        </div>
+        <div class="form-field">
+            <label>Porcentaje de ganancia</label>
+            <input type="number" name="percentage">
+        </div>
+        <div class="form-field">
+            <label>Código</label>
+            <input type="number" name="code">
+        </div>
+        <div class="form-button">
+            <button onclick="createProd(event)">Crear producto</button>
+        </div>
+        <div id="divError" class="div-error"></div>
+    </form>
+</div>
+</div>
+
+<script src="/js/crudprods.js"></script>

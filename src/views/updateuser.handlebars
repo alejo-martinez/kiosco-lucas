@@ -1,0 +1,18 @@
+<div class="container-home">
+    {{> nav user=user btnInicio=btnInicio}}
+
+    <div class="container-update">
+        <h3>Usuarios</h3>
+
+        <div class="div-prods-update">
+            {{#each users}}
+            <div class="each-link-prod">
+                <ul>
+                    <li><a href="/show/user/{{this._id}}">Usuario: {{this.name}}</a></li>
+                </ul>
+            </div>
+        {{/each}}
+        </div>
+
+    </div>
+</div>

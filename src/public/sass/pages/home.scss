@@ -1,0 +1,253 @@
+#abonoInput{
+    font-size: 20px;
+    padding: 6px;
+
+    &::-webkit-inner-spin-button,::-webkit-outer-spin-button{
+        appearance: none;
+    }
+}
+
+#divChange{
+    display: flex;
+    flex-flow: row nowrap;
+    width: 100%;
+    justify-content: space-around;
+}
+
+.container-home {
+    display: flex;
+    flex-flow: row nowrap;
+    height: 100%;
+}
+
+.body {
+    &-each-prod {
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-around;
+        width: 100%;
+    }
+
+    &-home {
+        display: grid;
+        width: 100%;
+        grid-template-rows: 10% 30% 60%;
+        grid-template-columns: 70% 30%;
+        grid-template-areas: 'input input'
+        'result total'
+        'table total';
+    }
+}
+
+
+.btn {
+    border: none;
+
+    &-check{
+        color: #009309;
+        font-size: 20px;
+        background-color: transparent;
+        cursor: pointer;
+    }
+
+    &-remove {
+        color: red;
+        height: fit-content;
+    }
+
+    &-add-prod{
+        background-color: black;
+        color: #fff;
+        padding: 4px;
+        border-radius: 4px;
+        margin: auto;
+        cursor: pointer;
+    }
+
+    &-end-purchase {
+        background-color: blue;
+        color: #fff;
+        border-radius: 6px;
+        padding: 6px;
+        cursor: pointer;
+        // margin-top: 3rem;
+    }
+
+    &-quantity {
+        cursor: pointer;
+        background-color: transparent;
+    }
+
+    &-empty{
+        padding: 5px;
+        border-radius: 4px;
+        color: #fff;
+        background-color: red;
+        cursor: pointer;
+    }
+
+    &-add {
+        margin: auto;
+
+        & button {
+
+            background-color: black;
+            color: #fff;
+            padding: 5px;
+            border-radius: 6px;
+        }
+    }
+}
+
+.div {
+
+    &-pay-client{
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+        align-items: center;
+
+        & input{
+            border: 1px solid black;
+            width: 50%;
+            height: 40px;
+        }
+
+        & label{
+            font-size: 18px;
+        }
+    }
+
+    &-span-info{
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: end;
+        gap: 8px;
+    }
+
+    &-btn {
+        &-empty {
+            margin: auto;
+        }
+
+        &-quantity {
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: space-around;
+
+        }
+    }
+
+    &-each-prod {
+        display: flex;
+        flex-flow: row nowrap;
+        gap: 7px;
+        text-align: center;
+        padding: 8px;
+        border-radius: 6px;
+    }
+
+    &-input-search {
+        grid-area: input;
+        display: flex;
+        justify-content: space-evenly;
+        width: 100%;
+        align-items: center;
+        // margin-top: 4rem;
+        border-bottom: 1px solid black;
+
+
+        &-checkbox{
+           justify-self: flex-end;
+        //    width: 100%;
+        }
+
+        & input{
+            margin: auto;
+        }
+    }
+
+    &-show-results {
+        grid-area: result;
+        display: flex;
+        flex-flow: column wrap;
+        gap: 14px;
+        margin-top: 2rem;
+        // justify-content: center;
+        overflow-y: auto;
+    }
+}
+
+
+.table {
+    grid-area: table;
+    display: flex;
+    flex-flow: column nowrap;
+    
+    &-search{
+        border-collapse: separate;
+        border-spacing: 0 12px;
+        & th{
+            font-size: 20px;
+        }
+    }
+
+    &-cart {
+        border-collapse: separate;
+        border-spacing: 0 10px;
+        margin: auto;
+        width: 100%;
+        border-top: 1px solid black;
+
+        & th{
+            font-size: 24px;
+        }
+
+        & tr{
+            border: none;
+            
+        }
+
+    }
+}
+
+.body-info-total{
+    height: 100%;
+    border-left: 1px solid black;
+    grid-area: total;
+    padding: 20px;
+
+}
+
+.td-button{
+    display: flex;
+}
+
+
+.info-total {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    gap: 15px;
+
+    & span {
+        padding: 0 !important;
+        font-size: 34px;
+    }
+}
+
+.tr{
+    &-results{
+        background-color: #c7c7c7;
+        font-size: 20px;
+        color: #000000;
+    }
+    
+    &-each-prod{
+        margin: 18px 0;
+    }
+}
+    
+#totalPrice{
+    font-weight: bold;
+}

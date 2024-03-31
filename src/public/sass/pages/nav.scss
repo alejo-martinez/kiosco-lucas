@@ -1,0 +1,47 @@
+.nav{
+    display: flex;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 200px;
+    border-right: 1px solid black;
+    &-user{
+        
+        &-inicio{
+            margin-bottom: 3rem;
+            font-size: 22px;
+
+            & a{
+                text-decoration: none;
+                color: #000000;
+            }
+        }
+    }
+
+    &-options{
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: space-around;
+        height: 400px;
+
+        &-admin{
+
+            &-li{
+                margin: 6px 0;
+                & a{
+                    color: #000000;
+                    text-decoration: none;
+                }
+            }
+        }
+    }
+}
+
+.btn-logout{
+    border: none;
+    cursor: pointer;
+    background-color: midnightblue;
+    border-radius: 6px;
+    padding: 4px;
+    color: #fff;
+    margin-top: 12px;
+}

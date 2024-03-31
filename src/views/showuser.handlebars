@@ -1,0 +1,60 @@
+<div class="container-prod">
+    {{> nav user=user admin=admin btnInicio=btnInicio}}
+
+    <div class="div-usuario">
+        <div class="div-usuario-info">
+            <div class="div-usuario-field"  id="divInfoname">
+                <div class="div-usuario-field-data">
+                    <span>Nombre:</span>
+                    <span id="spanname">{{usuario.name}}</span>
+                </div>
+                <button class="btn btn-edit-prod" onclick="showInputUser(event, 'name')"><i class="fa-solid fa-pen"></i></button>
+            </div>
+            <div class="div-usuario-field hide" id="divInputname">
+                <input type="text" id="inputname">
+                <button class="btn btn-check" onclick="editUser(event, '{{usuario._id}}', 'name')"><i class="fa-solid fa-check"></i></button>
+            </div>
+        </div>
+        <div class="div-usuario-info" >
+            <div class="div-usuario-field" id="divInfousername">
+                <div class="div-usuario-field-data">
+                    <span>Nombre de usuario:</span>
+                    <span id="spanuser_name">{{usuario.user_name}}</span>
+                </div>
+                <button class="btn btn-edit-prod" onclick="showInputUser(event, 'username')"><i class="fa-solid fa-pen"></i></button>
+            </div>
+            <div class="div-usuario-field hide" id="divInputusername">
+                <input type="text" id="inputusername">
+                <button class="btn btn-check" onclick="editUser(event, '{{usuario._id}}', 'user_name')"><i class="fa-solid fa-check"></i></button>
+            </div>
+        </div>
+        <div class="div-usuario-info" >
+            <div class="div-usuario-field" id="divInforole">
+                <div class="div-usuario-field-data">
+                    <span>Rol:</span>
+                    <span id="spanrole">{{usuario.role}}</span>
+                </div>
+                <button class="btn btn-edit-prod" onclick="showInputUser(event, 'role')"><i class="fa-solid fa-pen"></i></button>
+            </div>
+            <div class="div-usuario-field hide" id="divInputrole">
+                <input type="text" id="inputrole">
+                <button class="btn btn-check" onclick="editUser(event, '{{usuario._id}}', 'role')"><i class="fa-solid fa-check"></i></button>
+            </div>
+        </div>
+        <div class="div-usuario-info">
+            <div class="div-usuario-field"  id="divInfopassword">
+                <div class="div-usuario-field-data">
+                    <span>Contraseña:</span>
+                    <span>******</span>
+                </div>
+                <button class="btn btn-edit-prod" onclick="showInputUser(event, 'password')"><i class="fa-solid fa-pen"></i></button>
+            </div>
+            <div class="div-usuario-field hide" id="divInputpassword">
+                <input type="password" id="inputpassword">
+                <button class="btn btn-check" onclick="editUser(event, '{{usuario._id}}', 'password')"><i class="fa-solid fa-check"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/cruduser.js"></script>

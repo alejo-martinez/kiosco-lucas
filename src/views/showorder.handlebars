@@ -1,0 +1,22 @@
+<div class="container-home div">
+    {{> nav user=user admin=admin btnInicio=btnInicio}}
+    <div class="div-btn-back">
+        <a href="/orders"><i class="fa-solid fa-arrow-left-long"></i></a>
+    </div>
+    <div class="div-order">
+        <h2>Orden: {{ticket._id}}</h2>
+        <span>Emitida el día: {{ticket.created_at}}</span>
+        <span>Vendedor: {{ticket.seller.name}}</span>
+        <h4>Productos:</h4>
+        {{#each ticket.products}}
+
+        <div class="div-prods">
+            <span>Producto: {{this.product.title}}</span>
+            <span>Precio unitario: ${{this.product.sellingPrice}}</span>
+            <span>Cantidad comprada: {{this.quantity}}</span>
+            <span>Monto total del producto: ${{this.totalPrice}}</span>
+        </div>
+        {{/each}}
+        <span class="span-amount">Monto total: ${{ticket.amount}}</span>
+    </div>
+</div>

@@ -1,0 +1,20 @@
+.div{
+    &-pag-error{
+        display: flex;
+        flex-flow: column;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-content: center;
+        height: 100vh;
+
+        & h4{
+            font-size: 30px;
+            margin-bottom: 16px;
+        }
+
+        & a{
+            text-decoration: none;
+            text-align: center;
+        }
+    }
+}

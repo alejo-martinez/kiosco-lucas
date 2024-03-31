@@ -37,7 +37,7 @@ const initPassport = ()=> {
                 return done(null, false, {message:'Error, nombre de usuario en uso. Usá uno distinto.'});
             } 
             else {
-                const cart = await CartManager.create();
+                const cart = await CartManager.createCart();
                 const usuario = new UserDTO(name, user_name, password, role);
                 usuario.cart = cart._id;
                 await UserManager.create(usuario);

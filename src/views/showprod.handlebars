@@ -1,0 +1,104 @@
+<div class="container-prod">
+    {{> nav user=user admin=admin btnInicio=btnInicio}}
+
+    <div class="div-prod">
+        <div class="each-field-update">
+            <div class="each-field-update-text" id="texttitle">
+                <div>
+                    <span>Título:</span>
+                    <span id="spantitle">{{producto.title}}</span>
+                </div>
+                <button onclick="openEdit(event, 'title')" class="btn btn-edit-prod"><i
+                        class="fa-solid fa-pen"></i></button>
+            </div>
+            <div class="each-field-update-input hide" id="inputtitle">
+                <input type="text" id="valuetitle">
+                <button onclick="editProd(event, 'title', '{{producto._id}}')" class="btn btn-check"><i
+                        class="fa-solid fa-check"></i></button>
+            </div>
+        </div>
+        <div class="each-field-update">
+            <div class="each-field-update-text" id="textstock">
+                <div>
+                    <span>Stock:</span>
+                    <span id="spanstock">{{producto.stock}}</span>
+                </div>
+                <button onclick="openEdit(event, 'stock')" class="btn btn-edit-prod"><i
+                        class="fa-solid fa-pen"></i></button>
+            </div>
+            <div class="each-field-update-input hide" id="inputstock">
+                <input type="text" id="valuestock">
+                <button onclick="editProd(event, 'stock', '{{producto._id}}')" class="btn btn-check"><i
+                        class="fa-solid fa-check"></i></button>
+            </div>
+        </div>
+        <div class="each-field-update">
+            <div class="each-field-update-text" id="textcostPrice">
+                <div>
+                    <span>Precio al costo:</span>
+                    <span>$</span>
+                    <span id="spancostPrice">{{producto.costPrice}}</span>
+                </div>
+                <button onclick="openEdit(event, 'costPrice')" class="btn btn-edit-prod"><i
+                        class="fa-solid fa-pen"></i></button>
+            </div>
+            <div class="each-field-update-input hide" id="inputcostPrice">
+                <span>$</span>
+                <input type="text" id="valuecostPrice">
+                <button onclick="editProd(event, 'costPrice', '{{producto._id}}')" class="btn btn-check"><i
+                        class="fa-solid fa-check"></i></button>
+            </div>
+        </div>
+        <div class="each-field-update">
+            <div class="each-field-update-text" id="textsellingPrice">
+                <div>
+                    <span>Precio de venta:</span>
+                    <span>$</span>
+                    <span id="spansellingPrice">{{producto.sellingPrice}}</span>
+                </div>
+                <button onclick="openEdit(event, 'sellingPrice')" class="btn btn-edit-prod"><i
+                        class="fa-solid fa-pen"></i></button>
+            </div>
+            <div class="each-field-update-input hide" id="inputsellingPrice">
+                <span>$</span>
+                <input type="text" id="valuesellingPrice">
+                <button onclick="editProd(event, 'sellingPrice', '{{producto._id}}')" class="btn btn-check"><i
+                        class="fa-solid fa-check"></i></button>
+            </div>
+        </div>
+        <div class="each-field-update">
+            <div class="each-field-update-text" id="texttotalStock">
+                <div>
+                    <span>Total stock:</span>
+                    <span id="spantotalStock">{{producto.totalStock}}</span>
+                </div>
+                <button onclick="openEdit(event, 'totalStock')" class="btn btn-edit-prod"><i
+                        class="fa-solid fa-pen"></i></button>
+            </div>
+            <div class="each-field-update-input hide" id="inputtotalStock">
+                <input type="text" id="valuetotalStock">
+                <button onclick="editProd(event, 'totalStock', '{{producto._id}}')" class="btn btn-check"><i
+                        class="fa-solid fa-check"></i></button>
+            </div>
+        </div>
+        <div class="each-field-update">
+            <div class="each-field-update-text" id="textpercentage">
+                <div>
+                    <span>Porcentaje de ganancia:</span>
+                    <span id="spanpercentage">{{producto.percentage}}</span>
+                    <span>%</span>
+                </div>
+                <button onclick="openEdit(event, 'percentage')" class="btn btn-edit-prod"><i
+                        class="fa-solid fa-pen"></i></button>
+            </div>
+            <div class="each-field-update-input hide" id="inputpercentage">
+                <span>%</span>
+                <input type="text" id="valuepercentage">
+                <button onclick="editProd(event, 'percentage', '{{producto._id}}')" class="btn btn-check"><i
+                        class="fa-solid fa-check"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/crudprods.js"></script>

@@ -1,0 +1,23 @@
+        <div class="div-paginate-pages">
+            {{#if hasPrevPage}}
+            <a href="{{url}}?page={{prevPage}}"><i class="fa-solid fa-chevron-left"></i></a>
+            {{/if}}
+            {{#if backPages}}
+            <div class="pages">
+            {{#each backPages}}
+            <a href="{{../url}}/{{../cat}}?page={{this}}">{{this}}</a>
+            {{/each}}
+            </div>
+            {{/if}}
+            <span>{{page}}</span>
+            {{#if nextPages}}
+            <div class="pages">
+            {{#each nextPages}}
+            <a href="{{../url}}/{{../cat}}?page={{this}}">{{this}}</a>
+            {{/each}}
+            </div>
+            {{/if}}
+            {{#if hasNextPage}}
+            <a href="{{url}}?page={{nextPage}}"><i class="fa-solid fa-chevron-right"></i></a>
+            {{/if}}
+        </div>
