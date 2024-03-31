@@ -27,6 +27,7 @@ import ProductManager from "./dao/service/product.service.js";
 
 import handleErrors from './middlewares/error.middleware.js';
 import CartManager from "./dao/service/cart.service.js";
+import CustomError from "./errors/custom.error.js";
 
 const app = express();
 
@@ -76,6 +77,7 @@ io.on('connection', async (socket) => {
     socket.on('search', async (data) => {
         try {
             const prod = await ProductManager.getBy('code', Number(data.query));
+            if(prod.stock <= 0) throw new CustomError('No stock', 'Producto sin stock', 4);
             const totalPrice = Number(prod.sellingPrice);
             const cart = await CartManager.addProduct(data.cid, prod._id, 1, totalPrice, prod.stock);
             let total = 0;

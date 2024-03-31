@@ -5,12 +5,12 @@ export default class ResumeManager{
         await resumeModel.create(resume);
     }
 
-    static async endDayResume(amount, orders, date){
-        await resumeModel.updateOne({date: date}, {amount: amount, orders: orders});
+    static async endDayResume(amount, products, date){
+        await resumeModel.updateOne({date: date}, {amount: amount, products: products});
     }
 
     static async getTodayResume(date){
-        return await resumeModel.findOne({date: date}).populate('orders.order');
+        return await resumeModel.findOne({date: date}).populate('products.product');
     }
 
     static async getMonthResume(month, year){
@@ -18,7 +18,7 @@ export default class ResumeManager{
     }
 
     static async getResumeById(id){
-        return await resumeModel.findById(id).populate({path: 'orders.order', populate: {path: 'products.product'}}).lean();
+        return await resumeModel.findById(id).populate('products.product').lean();
     }
 
     static async getAllResumeByCat(cat, page){

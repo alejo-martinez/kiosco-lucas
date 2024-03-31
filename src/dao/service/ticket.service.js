@@ -15,7 +15,10 @@ export class TicketManager{
         const actualMonth = date.getMonth();
         const actualYear = date.getFullYear();
         const initDate = new Date(actualYear, actualMonth, 1);
+        console.log(initDate)
         const endDate = new Date(actualYear, actualMonth + 1, 0);
+        endDate.setHours(23, 59, 59, 999);
+        console.log(endDate)
         return await ticketModel.find({created_at: {$gte: initDate, $lte: endDate}}).lean();
     }
 

@@ -172,7 +172,7 @@ socket.on('updatedCart', data => {
         </svg></button></td>
         </tr>`;
         });
-        span.innerText = `${Number.isInteger(data.total) ? data.total.toFixed(2) : data.total}`;
+        span.innerText = `${Number.isInteger(data.total) ? data.total.toFixed(2) : data.total.toFixed(2)}`;
         tbody.innerHTML = cartHTML;
         inputSearchCode.value = "";
         inputSearchCode.focus();
@@ -246,7 +246,7 @@ const showChange = (total) => {
     } else {
         const divChange = document.getElementById('divChange');
         const result = parseFloat(dineroAbonado) - parseFloat(total);
-        divChange.innerHTML = `<span>Vuelto: $${Number.isInteger(result) ? result.toFixed(2) : result}</span>
+        divChange.innerHTML = `<span>Vuelto: $${Number.isInteger(result) ? result.toFixed(2) : result.toFixed(2)}</span>
     <button onclick="cleanChange(event)" class="btn btn-check"><i class="fa-solid fa-check"></i></button>`
     }
 }
@@ -254,32 +254,38 @@ const showChange = (total) => {
 const endSale = async (e) => {
     e.preventDefault();
     const total = document.getElementById('totalPrice');
-    const response = await fetch('/api/ticket/create', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ amount: total.innerText })
-    });
-    const json = await response.json();
-    if (json.status === 'success') {
-        showChange(total.innerText)
-        const tbody = document.getElementById('tbodyCart');
-        tbody.innerHTML = '';
-        total.innerText = 0.00;
-        inputSearch.value = '';
-        document.getElementById('bodySearch').innerHTML = '';
-        Toastify({
-            text: json.message,
-            duration: 3000
-        }).showToast();
+    const divInptAbono = document.getElementById("abonoInput").value;
+    if (Number(divInptAbono) < Number(total.innerText)){
+        Toastify({text: 'Ingresa una cantidad superior al monto porfavor', duration: 3000}).showToast()
     }
-    if (json.status === 'error') {
-        Toastify({
-            text: json.error,
-            duration: 3000
-        }).showToast();
+    else {
+        const response = await fetch('/api/ticket/create', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ amount: total.innerText })
+        });
+        const json = await response.json();
+        if (json.status === 'success') {
+            showChange(total.innerText)
+            const tbody = document.getElementById('tbodyCart');
+            tbody.innerHTML = '';
+            total.innerText = 0.00;
+            inputSearch.value = '';
+            document.getElementById('bodySearch').innerHTML = '';
+            Toastify({
+                text: json.message,
+                duration: 3000
+            }).showToast();
+        }
+        if (json.status === 'error') {
+            Toastify({
+                text: json.error,
+                duration: 3000
+            }).showToast();
+        }
     }
 }
 
@@ -309,26 +315,26 @@ const emptyCart = async (e, cid) => {
     }
 }
 
-const createSummaryDay = async(e)=>{
+const createSummaryDay = async (e) => {
     e.preventDefault();
     const input = document.getElementById('startDay');
     const response = await fetch('/api/resume/create/diary', {
-        method:'POST',
+        method: 'POST',
         credentials: 'include',
-        headers:{
+        headers: {
             'Content-Type': 'application/json'
         },
-        body:JSON.stringify({initAmount: input.value})
+        body: JSON.stringify({ initAmount: input.value })
     });
     const json = await response.json();
-    if(json.status === 'succes'){
+    if (json.status === 'success') {
         Toastify({
             text: json.message,
             duration: 3000
         }).showToast();
         window.location.reload();
     }
-    if(json.status === 'error'){
+    if (json.status === 'error') {
         Toastify({
             text: json.error,
             duration: 3000
@@ -336,7 +342,7 @@ const createSummaryDay = async(e)=>{
     }
 }
 
-const showAlertStartDay = (e)=>{
+const showAlertStartDay = (e) => {
     e.preventDefault();
     Swal.fire({
         title: "<strong>Ingresa el monto de la caja de inicio</strong>",
@@ -349,23 +355,23 @@ const showAlertStartDay = (e)=>{
         `,
         showCloseButton: true,
         showConfirmButton: false
-      });
+    });
 }
 
-const finishDay = async(e)=>{
+const finishDay = async (e) => {
     e.preventDefault();
-    const response = await fetch('/api/resume/end',{
-        method:'PUT',
-        credentials:'include',
+    const response = await fetch('/api/resume/end', {
+        method: 'PUT',
+        credentials: 'include',
     });
     const json = await response.json();
-    if(json.status === 'succes'){
+    if (json.status === 'succes') {
         Toastify({
             text: json.message,
             duration: 3000
         }).showToast();
     }
-    if(json.status === 'error'){
+    if (json.status === 'error') {
         Toastify({
             text: json.error,
             duration: 3000
@@ -373,20 +379,20 @@ const finishDay = async(e)=>{
     }
 }
 
-const generateMonthlySummary = async(e)=>{
+const generateMonthlySummary = async (e) => {
     e.preventDefault();
-    const response = await fetch('/api/resume/create/monthly',{
-        method:'POST',
-        credentials:'include'
+    const response = await fetch('/api/resume/create/monthly', {
+        method: 'POST',
+        credentials: 'include'
     });
     const json = await response.json();
-    if(json.status === 'success'){
+    if (json.status === 'success') {
         Toastify({
             text: json.message,
             duration: 3000
         }).showToast()
     }
-    if(json.status === 'error'){
+    if (json.status === 'error') {
         Toastify({
             text: json.error,
             duration: 4000

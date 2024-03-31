@@ -35,9 +35,9 @@ const home = async (req, res, next) => {
             let total = 0;
             carrito.products.forEach(prod => {
                 prod.totalPrice = (Number(prod.product.sellingPrice) * Number(prod.quantity));
-                total += Number.isInteger(prod.totalPrice) ? Number(prod.totalPrice.toFixed(2)) : Number(prod.totalPrice);
+                total += Number.isInteger(prod.totalPrice) ? Number(prod.totalPrice.toFixed(2)) : Number(prod.totalPrice.toFixed(2));
             });
-            total = Number.isInteger(total) ? total.toFixed(2) : total;
+            total = Number.isInteger(total) ? total.toFixed(2) : total.toFixed(2);
             let admin;
             if (user.role === 'admin') {
                 admin = true;
