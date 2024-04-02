@@ -1,4 +1,5 @@
 const socket = io();
+let idResume;
 
 const inputSearch = document.getElementById('inputSearchTitle');
 const divCart = document.getElementById('cart');
@@ -164,7 +165,7 @@ socket.on('updatedCart', data => {
             <td>${product.product.title}</td>
             <td id="quantity${product.product._id}">${product.quantity}</td>
             <td>$${product.product.sellingPrice}</td>
-            <td>$${Number.isInteger(product.totalPrice) ? product.totalPrice.toFixed(2) : product.totalPrice}</td>
+            <td>$${Number.isInteger(product.totalPrice) ? product.totalPrice.toFixed(2) : product.totalPrice.toFixed(2)}</td>
             <td><button class="btn btn-quantity btn-remove" onclick="removeProd(event, '${product.product._id}')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg"
             viewBox="0 0 16 16">
             <path
@@ -172,7 +173,7 @@ socket.on('updatedCart', data => {
         </svg></button></td>
         </tr>`;
         });
-        span.innerText = `${Number.isInteger(data.total) ? data.total.toFixed(2) : data.total.toFixed(2)}`;
+        span.innerText = `${Number(data.total).toFixed(2)}`;
         tbody.innerHTML = cartHTML;
         inputSearchCode.value = "";
         inputSearchCode.focus();
@@ -255,6 +256,7 @@ const endSale = async (e) => {
     e.preventDefault();
     const total = document.getElementById('totalPrice');
     const divInptAbono = document.getElementById("abonoInput").value;
+    const optionSelect = document.getElementById('paymentMethod').value;
     if (Number(divInptAbono) < Number(total.innerText)){
         Toastify({text: 'Ingresa una cantidad superior al monto porfavor', duration: 3000}).showToast()
     }
@@ -265,7 +267,7 @@ const endSale = async (e) => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ amount: total.innerText })
+            body: JSON.stringify({ amount: total.innerText, payment_method: optionSelect })
         });
         const json = await response.json();
         if (json.status === 'success') {
@@ -328,11 +330,18 @@ const createSummaryDay = async (e) => {
     });
     const json = await response.json();
     if (json.status === 'success') {
+        const divStartDay = document.getElementById('btnStartDay');
+        const divButtons = document.getElementById('divShowBtnSummary');
         Toastify({
             text: json.message,
             duration: 3000
         }).showToast();
-        window.location.reload();
+        Swal.close();
+        divStartDay.classList.add('hiden');
+        divButtons.innerHTML = `<div id="btnEndDay">
+        <button onclick="finishDay(event)" class="btn-generate-summary">Terminar el día</button>
+    </div>`;
+        idResume = json.id;
     }
     if (json.status === 'error') {
         Toastify({
@@ -346,7 +355,6 @@ const showAlertStartDay = (e) => {
     e.preventDefault();
     Swal.fire({
         title: "<strong>Ingresa el monto de la caja de inicio</strong>",
-        icon: "info",
         html: `
           <div>
             <input id="startDay" type="number" placeholder="Monto">
@@ -358,18 +366,26 @@ const showAlertStartDay = (e) => {
     });
 }
 
-const finishDay = async (e) => {
+const finishDay = async (e, id) => {
     e.preventDefault();
-    const response = await fetch('/api/resume/end', {
+    const idSummary = idResume? idResume : id;
+    console.log(idSummary)
+    const response = await fetch(`/api/resume/end/${idSummary}`, {
         method: 'PUT',
         credentials: 'include',
     });
     const json = await response.json();
-    if (json.status === 'succes') {
+    if (json.status === 'success') {
+        const divButtons = document.getElementById('divShowBtnSummary');
+        const divFinishDay = document.getElementById('btnEndDay');
         Toastify({
             text: json.message,
             duration: 3000
         }).showToast();
+        divFinishDay.classList.add('hiden')
+        divButtons.innerHTML = `<div id="btnStartDay">
+        <button onclick="showAlertStartDay(event)" class="btn-generate-summary">Empezar el día</button>
+    </div>`
     }
     if (json.status === 'error') {
         Toastify({

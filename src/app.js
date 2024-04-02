@@ -81,7 +81,10 @@ io.on('connection', async (socket) => {
             const totalPrice = Number(prod.sellingPrice);
             const cart = await CartManager.addProduct(data.cid, prod._id, 1, totalPrice, prod.stock);
             let total = 0;
-            cart.products.forEach(prod=> total += prod.totalPrice);
+            cart.products.forEach(prod=>{
+                total += prod.totalPrice;
+                total = total.toFixed(2);
+            });
             io.emit('updatedCart', {cart:cart, total:total});
             
         } catch (error) {

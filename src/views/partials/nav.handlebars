@@ -9,15 +9,20 @@
             <button onclick="logOut(event)" class="btn btn-logout">Cerrar sesión</button>
         </div>
         <div class="nav-options-admin">
-        {{#if admin}}
+            {{#if admin}}
             <li class="nav-options-admin-li"><a href="/create/prod">Agregar producto</a></li>
             <li class="nav-options-admin-li"><a href="/update/prod">Actualizar producto</a></li>
             <li class="nav-options-admin-li"><a href="/create/user">Agregar usuario</a></li>
             <li class="nav-options-admin-li"><a href="/update/user">Actualizar usuario</a></li>
             <li class="nav-options-admin-li"><a href="/show/summaries/monthly">Ver resumen del mes</a></li>
             <li class="nav-options-admin-li"><a href="/show/summaries/diary">Ver resumen del día</a></li>
-        {{/if}}
+            {{/if}}
             <li class="nav-options-admin-li"><a href="/orders">Ver ventas</a></li>
+            {{#if admin}}
+            <div class="div-generate-summary">
+                <button onclick="generateMonthlySummary(event)" class="btn-generate-summary">Generar resumen del mes</button>
+            </div>
+            {{/if}}
         </div>
         {{/if}}
     </ul>

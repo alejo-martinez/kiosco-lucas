@@ -16,6 +16,11 @@ export const formatDate = (date)=> {
     return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
 };
 
+export const formatDateWithHours = (date)=> {
+    const dateString = new Date(date)
+    return `${dateString.getDate()}/${dateString.getMonth() + 1}/${dateString.getFullYear()} ${String(dateString.getHours()).padStart(2, '0')}:${String(dateString.getMinutes()).padStart(2, '0')}`;
+};
+
 export const generateToken = (user) => {
     const token = jwt.sign({ user }, config.jwtSecret, { expiresIn: '24h' });
     return token;
@@ -30,6 +35,13 @@ export const isValidPassword = (user, password) => {
 export const calculateSellingPrice = (percentage, costPrice) =>{
     const result =  costPrice * (1 + percentage / 100);
     return Number.isInteger(result) ? result.toFixed(2) : result;
+}
+
+export const paymentMethod = (method) =>{
+    if(method === 'eft') return 'Efectivo';
+    if(method === 'mp') return 'Mercado Pago';
+    if(method === 'td') return 'Tarjeta de débito';
+    if(method === 'tc') return 'Tarjeta de crédito';
 }
 
 const __filename = fileURLToPath(import.meta.url);

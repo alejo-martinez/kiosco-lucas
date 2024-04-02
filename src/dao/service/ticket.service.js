@@ -15,10 +15,8 @@ export class TicketManager{
         const actualMonth = date.getMonth();
         const actualYear = date.getFullYear();
         const initDate = new Date(actualYear, actualMonth, 1);
-        console.log(initDate)
         const endDate = new Date(actualYear, actualMonth + 1, 0);
         endDate.setHours(23, 59, 59, 999);
-        console.log(endDate)
         return await ticketModel.find({created_at: {$gte: initDate, $lte: endDate}}).lean();
     }
 
@@ -26,9 +24,9 @@ export class TicketManager{
         await ticketModel.create(ticket);
     }
 
-    static async getOrdersDate(date){
-        const tomorrowDate = new Date(date);
-        tomorrowDate.setDate(tomorrowDate.getDate()+1)
-        return await ticketModel.find({created_at: {$gte: date, $lt: tomorrowDate}}).lean();
+    static async getOrdersDate(initDate, finishDate){
+        // const tomorrowDate = new Date(date);
+        // tomorrowDate.setDate(tomorrowDate.getDate()+1)
+        return await ticketModel.find({created_at: {$gte: initDate, $lt: finishDate}}).lean();
     }
 }

@@ -187,6 +187,11 @@
     &-search{
         border-collapse: separate;
         border-spacing: 0 12px;
+
+        & th, td{
+            text-align: center;
+        }
+
         & th{
             font-size: 20px;
         }
@@ -198,6 +203,10 @@
         margin: auto;
         width: 100%;
         border-top: 1px solid black;
+
+        & th, td{
+            text-align: center;
+        }
 
         & th{
             font-size: 24px;
@@ -238,8 +247,8 @@
 
 .tr{
     &-results{
-        background-color: #c7c7c7;
-        font-size: 20px;
+        background-color: #D9AB91;
+        font-size: 16px;
         color: #000000;
     }
     

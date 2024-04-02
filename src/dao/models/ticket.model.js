@@ -7,7 +7,8 @@ const schema = new mongoose.Schema({
     products: {type:[{product: {type: mongoose.Schema.Types.ObjectId, ref: 'products'}, quantity: Number, totalPrice: Number}]},
     amount: Number,
     created_at: Date,
-    seller: {type: mongoose.Schema.Types.ObjectId, ref: 'users'}
+    seller: {type: mongoose.Schema.Types.ObjectId, ref: 'users'},
+    payment_method: {type: String, enum: ['eft', 'mp', 'td', 'tc']}
 });
 
 schema.plugin(mongoosePaginate);

@@ -66,24 +66,27 @@
                     <label>Abona:</label>
                     <input type="number" id="abonoInput">
                 </div>
+                <div>
+                    <select name="payment_method" id="paymentMethod">
+                        <option value="eft">Efectivo</option>
+                        <option value="mp">Mercado Pago</option>
+                        <option value="td">Tarjeta de débito</option>
+                        <option value="tc">Tarjeta de crédito</option>
+                    </select>
+                </div>
                 <button onclick="endSale(event)" class="btn btn-end-purchase">Realizar pago</button>
                 <div id="divChange"></div>
             </div>
 
-            <div>
-                {{#unless summary}}
-                <div>
-                    <button onclick="showAlertStartDay(event)">Empezar el día</button>
+            <div id="divShowBtnSummary">
+                {{#unless summaryDay}}
+                <div id="btnStartDay">
+                    <button onclick="showAlertStartDay(event)"  class="btn-generate-summary">Empezar el día</button>
                 </div>
                 {{/unless}}
-                {{#if summary}}
-                <div>
-                    <button onclick="finishDay(event)">Terminar el día</button>
-                </div>
-                {{/if}}
-                {{#if admin}}
-                <div>
-                    <button onclick="generateMonthlySummary(event)">Generar resumen del mes</button>
+                {{#if summaryDay}}
+                <div id="btnEndDay">
+                    <button onclick="finishDay(event, '{{summaryDay._id}}')"  class="btn-generate-summary">Terminar el día</button>
                 </div>
                 {{/if}}
             </div>
