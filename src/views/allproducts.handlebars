@@ -1,0 +1,47 @@
+<div class="container-prod">
+    {{> nav user=user admin=admin btnInicio=btnInicio}}
+
+    <div class="body-all-products">
+
+
+        <div class="div-input-search-code">
+            <form>
+                <input type="text" id="inputSearchCode">
+                <button onclick="searchProdCode(event)">Buscar</button>
+            </form>
+        </div>
+
+        <div id="divResultsProds">
+        </div>
+
+        <div id="divAllProducts">
+            <table class="table-products">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Nombre</th>
+                        <th>Precio x Unidad Costo</th>
+                        <th>Precio x Unidad Venta</th>
+                        <th>Stock en tienda</th>
+                        <th>Stock Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each products}}
+                    <tr>
+                        <td>{{this.code}}</td>
+                        <td>{{this.title}}</td>
+                        <td>$ {{this.costPrice}}</td>
+                        <td>$ {{this.sellingPrice}}</td>
+                        <td>{{this.stock}}</td>
+                        <td>{{this.totalStock}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/crudprods.js"></script>

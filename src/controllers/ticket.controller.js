@@ -15,13 +15,18 @@ const getAllTickets = async(req, res, next)=>{
 
 const createTicket = async(req, res, next)=>{
     try {
-        const {amount} = req.body;
+        const {amount, payment_method} = req.body;
+        if(!payment_method) throw new CustomError('Missing arguments', 'Selecciona un método de pago', 2);
         if(amount <= 0) throw new CustomError('Invalid amount', 'El total no puede ser 0 o menor que 0', 1);
         const user = req.user;
         if(!user) throw new CustomError('Sesion expired', 'Sesión expirada, volvé a iniciar sesión', 6);
         const cart = await CartManager.getCartById(user.cart._id);
         if(cart.products.length === 0) throw new CustomError('No products', 'Debes agregar al menos un producto', 2)
-        const ticket = new TicketDTO(cart.products, amount, user._id);
+        const productsCart = [];
+        cart.products.forEach(prod=>{
+            productsCart.push({product: {title: prod.product.title, sellingPrice: prod.product.sellingPrice, id: prod.product._id, code: prod.product.code, costPrice: prod.product.costPrice }, quantity: prod.quantity, totalPrice: prod.totalPrice });
+        })
+        const ticket = new TicketDTO(productsCart, amount, user._id, payment_method);
         await TicketManager.createTicket(ticket);
         const productos = await ProductManager.getSearch();
         for (let index = 0; index < cart.products.length; index++) {

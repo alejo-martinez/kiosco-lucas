@@ -27,6 +27,7 @@ import ProductManager from "./dao/service/product.service.js";
 
 import handleErrors from './middlewares/error.middleware.js';
 import CartManager from "./dao/service/cart.service.js";
+import CustomError from "./errors/custom.error.js";
 
 const app = express();
 
@@ -73,13 +74,41 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'handlebars');
 
 io.on('connection', async (socket) => {
+
+    socket.on('searchCodeUpdate', async(data)=>{
+        try {
+            const prod = await ProductManager.getBy('code', Number(data.query));
+            io.emit('resultCodeUpdate', {producto: prod});
+        } catch (error) {
+            io.emit('errorCodeUpdate', {error: error.message})
+        }
+    })
+
+    socket.on('searchCode', async(data)=>{
+        try {
+            const prod = await ProductManager.getBy('code', Number(data.query));
+            io.emit('resultCode', {producto: prod});
+        } catch (error) {
+            io.emit('errorCode', {error: error.message})
+        }
+
+    })
+
     socket.on('search', async (data) => {
         try {
             const prod = await ProductManager.getBy('code', Number(data.query));
-            const totalPrice = Number(prod.sellingPrice);
-            const cart = await CartManager.addProduct(data.cid, prod._id, 1, totalPrice, prod.stock);
+            if(prod.stock <= 0) throw new CustomError('No stock', 'Producto sin stock', 4);
+            const carrito = await CartManager.getCartById(data.cid);
+            const finded = carrito.products.find(p => p.product.equals(prod._id));
+
+            if((finded && ((Number(finded.quantity) + Number(data.quantity) > prod.stock))) || (Number(data.quantity) > prod.stock)) throw new CustomError('No stock', 'Alcanzaste el máximo de stock de este producto', 6)
+            const totalPrice = Number(prod.sellingPrice) * Number(data.quantity);
+            const cart = await CartManager.addProduct(data.cid, prod._id, data.quantity, totalPrice, prod.stock);
             let total = 0;
-            cart.products.forEach(prod=> total += prod.totalPrice);
+            cart.products.forEach(prod=>{
+                total += Number(prod.totalPrice);
+            });
+            total = Number(total).toFixed(2);
             io.emit('updatedCart', {cart:cart, total:total});
             
         } catch (error) {

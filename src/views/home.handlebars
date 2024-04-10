@@ -5,7 +5,7 @@
         <div class="div-input-search">
             <form id="divSearchCode">
                 <input type="text" id="inputSearch">
-                <button onclick="searchProd(event)">Buscar</button>
+                <button onclick="openQuantity(event)">Buscar</button>
             </form>
 
             <div class="hide" id="divSearchTitle">
@@ -66,24 +66,28 @@
                     <label>Abona:</label>
                     <input type="number" id="abonoInput">
                 </div>
-                <button onclick="endSale(event)" class="btn btn-end-purchase">Realizar pago</button>
+                <div>
+                    <select name="payment_method" id="paymentMethod">
+                        <option value="eft">Efectivo</option>
+                        <option value="mp">Mercado Pago</option>
+                        <option value="td">Tarjeta de débito</option>
+                        <option value="tc">Tarjeta de crédito</option>
+                    </select>
+                </div>
+                <button onclick="endSale(event)" class="btn btn-end-purchase">Realizar venta</button>
+                <button onclick="endSaleTotal(event)" class="btn btn-end-purchase">Abona justo</button>
                 <div id="divChange"></div>
             </div>
 
-            <div>
-                {{#unless summary}}
-                <div>
-                    <button onclick="showAlertStartDay(event)">Empezar el día</button>
+            <div id="divShowBtnSummary">
+                {{#unless summaryDay}}
+                <div id="btnStartDay">
+                    <button onclick="showAlertStartDay(event)"  class="btn-generate-summary">Empezar el día</button>
                 </div>
                 {{/unless}}
-                {{#if summary}}
-                <div>
-                    <button onclick="finishDay(event)">Terminar el día</button>
-                </div>
-                {{/if}}
-                {{#if admin}}
-                <div>
-                    <button onclick="generateMonthlySummary(event)">Generar resumen del mes</button>
+                {{#if summaryDay}}
+                <div id="btnEndDay">
+                    <button onclick="finishDay(event, '{{summaryDay._id}}')"  class="btn-generate-summary">Terminar el día</button>
                 </div>
                 {{/if}}
             </div>

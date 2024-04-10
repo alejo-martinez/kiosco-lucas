@@ -4,16 +4,27 @@
     <div class="container-update">
         <h3>Productos</h3>
         {{> pagination hasNextPage=hasNextPage hasPrevPage=hasPrevPage nextPage=nextPage prevPage=prevPage page=page }}
-        <div class="div-prods-update">
+        <div class="div-input-search-code">
+            <form>
+                <input type="text" id="inputSearchCodeUpdate">
+                <button onclick="searchProdCodeUpdate(event)">Buscar</button>
+            </form>
+        </div>
+
+        <div id="divResultsProdsUpdate">
+        </div>
+
+        <div class="div-prods-update" id="divProductsUpdate">
             {{#each products}}
             <div class="each-link-prod">
                 <ul>
                     <li><a href="/update/prod/{{this._id}}">{{this.title}}</a></li>
                 </ul>
             </div>
-        {{/each}}
+            {{/each}}
         </div>
 
     </div>
 </div>
+<script src="/socket.io/socket.io.js"></script>
 <script src="/js/crudprods.js"></script>

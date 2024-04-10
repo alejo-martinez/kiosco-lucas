@@ -13,8 +13,12 @@
             </div>
             <div class="each-field-update-input hide" id="inputtitle">
                 <input type="text" id="valuetitle">
-                <button onclick="editProd(event, 'title', '{{producto._id}}')" class="btn btn-check"><i
-                        class="fa-solid fa-check"></i></button>
+                <div class="options-edit">
+                    <button onclick="closeEdit(event, 'title', '{{producto._id}}')" class="btn btn-cancel-update"><i
+                            class="fa-solid fa-xmark"></i></button>
+                    <button onclick="editProd(event, 'title', '{{producto._id}}')" class="btn btn-check"><i
+                            class="fa-solid fa-check"></i></button>
+                </div>
             </div>
         </div>
         <div class="each-field-update">
@@ -28,8 +32,12 @@
             </div>
             <div class="each-field-update-input hide" id="inputstock">
                 <input type="text" id="valuestock">
-                <button onclick="editProd(event, 'stock', '{{producto._id}}')" class="btn btn-check"><i
-                        class="fa-solid fa-check"></i></button>
+                <div class="options-edit">
+                    <button onclick="closeEdit(event, 'stock', '{{producto._id}}')" class="btn btn-cancel-update"><i
+                            class="fa-solid fa-xmark"></i></button>
+                    <button onclick="editProd(event, 'stock', '{{producto._id}}')" class="btn btn-check"><i
+                            class="fa-solid fa-check"></i></button>
+                </div>
             </div>
         </div>
         <div class="each-field-update">
@@ -45,8 +53,12 @@
             <div class="each-field-update-input hide" id="inputcostPrice">
                 <span>$</span>
                 <input type="text" id="valuecostPrice">
-                <button onclick="editProd(event, 'costPrice', '{{producto._id}}')" class="btn btn-check"><i
-                        class="fa-solid fa-check"></i></button>
+                <div class="options-edit">
+                    <button onclick="closeEdit(event, 'costPrice', '{{producto._id}}')" class="btn btn-cancel-update"><i
+                            class="fa-solid fa-xmark"></i></button>
+                    <button onclick="editProd(event, 'costPrice', '{{producto._id}}')" class="btn btn-check"><i
+                            class="fa-solid fa-check"></i></button>
+                </div>
             </div>
         </div>
         <div class="each-field-update">
@@ -62,8 +74,12 @@
             <div class="each-field-update-input hide" id="inputsellingPrice">
                 <span>$</span>
                 <input type="text" id="valuesellingPrice">
-                <button onclick="editProd(event, 'sellingPrice', '{{producto._id}}')" class="btn btn-check"><i
-                        class="fa-solid fa-check"></i></button>
+                <div class="options-edit">
+                    <button onclick="closeEdit(event, 'sellingPrice', '{{producto._id}}')"
+                        class="btn btn-cancel-update"><i class="fa-solid fa-xmark"></i></button>
+                    <button onclick="editProd(event, 'sellingPrice', '{{producto._id}}')" class="btn btn-check"><i
+                            class="fa-solid fa-check"></i></button>
+                </div>
             </div>
         </div>
         <div class="each-field-update">
@@ -77,8 +93,12 @@
             </div>
             <div class="each-field-update-input hide" id="inputtotalStock">
                 <input type="text" id="valuetotalStock">
-                <button onclick="editProd(event, 'totalStock', '{{producto._id}}')" class="btn btn-check"><i
-                        class="fa-solid fa-check"></i></button>
+                <div class="options-edit">
+                    <button onclick="closeEdit(event, 'totalStock', '{{producto._id}}')"
+                        class="btn btn-cancel-update"><i class="fa-solid fa-xmark"></i></button>
+                    <button onclick="editProd(event, 'totalStock', '{{producto._id}}')" class="btn btn-check"><i
+                            class="fa-solid fa-check"></i></button>
+                </div>
             </div>
         </div>
         <div class="each-field-update">
@@ -94,8 +114,12 @@
             <div class="each-field-update-input hide" id="inputpercentage">
                 <span>%</span>
                 <input type="text" id="valuepercentage">
-                <button onclick="editProd(event, 'percentage', '{{producto._id}}')" class="btn btn-check"><i
-                        class="fa-solid fa-check"></i></button>
+                <div class="options-edit">
+                    <button onclick="closeEdit(event, 'percentage', '{{producto._id}}')"
+                        class="btn btn-cancel-update"><i class="fa-solid fa-xmark"></i></button>
+                    <button onclick="editProd(event, 'percentage', '{{producto._id}}')" class="btn btn-check"><i
+                            class="fa-solid fa-check"></i></button>
+                </div>
             </div>
         </div>
     </div>

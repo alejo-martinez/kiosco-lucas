@@ -12,11 +12,11 @@ export default class CartManager{
         if(prodAdded){
             if(parseInt(prodAdded.quantity) + parseInt(quantity) > stock) throw new CustomError('Limit stock', 'Límite de stock alcanzado', 6);
             prodAdded.quantity += Number(quantity);
-            prodAdded.totalPrice += totalPrice;
+            prodAdded.totalPrice += totalPrice.toFixed(2);
             await cartModel.updateOne({_id: cid, 'products.product': pid}, {$inc:{'products.$.quantity':Number(quantity), 'products.$.totalPrice': totalPrice}})
             return await cartModel.findById(cid).populate('products.product').lean();
         }else{
-            await cartModel.findOneAndUpdate({_id: cid}, {$push:{products:{product:pid, quantity: quantity, totalPrice: totalPrice}}})
+            await cartModel.findOneAndUpdate({_id: cid}, {$push:{products:{product:pid, quantity: quantity, totalPrice: totalPrice.toFixed(2)}}})
             return await cartModel.findById(cid).populate('products.product').lean(); 
         }
     }

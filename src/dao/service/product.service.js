@@ -11,7 +11,7 @@ export default class  ProductManager{
     }
 
     static async getById(id){
-        return await productModel.findById(id).lean();
+        return await productModel.findOne({_id: id}).lean();
     }
 
     static async getBy(key, value){

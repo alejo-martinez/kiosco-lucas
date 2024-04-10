@@ -8,8 +8,8 @@
     <div>
 
     {{#each summaries}}
-        <div>
-            <a href="/show/summary/{{this._id}}">Resumen del mes {{this.month}}</a>
+        <div class="div-prods-update">
+            <a href="/show/summary/{{this._id}}" class="each-month">Resumen del {{#if this.month}} mes: {{this.month}} {{else}} día: {{this.date}} {{/if}}</a>
             
         </div>
     {{/each}}
