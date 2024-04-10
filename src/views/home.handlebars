@@ -5,7 +5,7 @@
         <div class="div-input-search">
             <form id="divSearchCode">
                 <input type="text" id="inputSearch">
-                <button onclick="searchProd(event)">Buscar</button>
+                <button onclick="openQuantity(event)">Buscar</button>
             </form>
 
             <div class="hide" id="divSearchTitle">
@@ -74,7 +74,8 @@
                         <option value="tc">Tarjeta de crédito</option>
                     </select>
                 </div>
-                <button onclick="endSale(event)" class="btn btn-end-purchase">Realizar pago</button>
+                <button onclick="endSale(event)" class="btn btn-end-purchase">Realizar venta</button>
+                <button onclick="endSaleTotal(event)" class="btn btn-end-purchase">Abona justo</button>
                 <div id="divChange"></div>
             </div>
 

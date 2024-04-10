@@ -10,10 +10,11 @@ router.get('/', authToken, viewsController.home);
 
 router.get('/:option/:model', authToken, adminUser, viewsController.panelOption);
 router.get('/update/prod/:pid', authToken, adminUser, viewsController.showProd);
-router.get('/show/summaries/:cat', authToken, adminUser, viewsController.getAllSummary);
-router.get('/show/summary/:sid', authToken, adminUser, viewsController.showSummary);
+router.get('/show/summaries/:cat', authToken,  viewsController.getAllSummary);
+router.get('/show/summary/:sid', authToken, viewsController.showSummary);
 router.get('/orders', authToken, viewsController.getOrders);
 router.get('/show/order/:tid', authToken, viewsController.showOrder);
 router.get('/show/user/:uid', authToken, adminUser, viewsController.showUser);
+router.get('/products', authToken, viewsController.allProducts);
 
 export default router;

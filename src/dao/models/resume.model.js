@@ -4,10 +4,11 @@ import mongoosePaginate from 'mongoose-paginate-v2';
 const collection = 'resume';
 
 const schema = new mongoose.Schema({
-    init_date: {type: Date},
-    finish_date: {type: Date},
+    init_date: {init: {type: Date}, seller: {type: mongoose.Schema.Types.ObjectId, ref: 'users'}},
+    finish_date: {end: {type: Date}, seller: {type: mongoose.Schema.Types.ObjectId, ref: 'users'}},
     amount: {type: Number, default: 0},
-    products: {type:[{product: {type: mongoose.Schema.Types.ObjectId, ref: 'products'}, quantity: Number, total: Number}], default: []},
+    amount_per_method: [{method: String, amount: Number}],
+    products: {type: [{product: {title: String, sellingPrice: Number, id: String, costPrice: Number, code: Number}, quantity: Number, total: Number}], default: []},
     category: {type: String, enum:['diary', 'monthly']},
     initAmount: {type: Number},
     month: {type: Number},

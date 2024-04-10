@@ -8,7 +8,7 @@ export class TicketManager{
     }
 
     static async getById(id){
-        return await ticketModel.findById(id).populate('products.product seller').lean();
+        return await ticketModel.findById(id).populate('seller').lean();
     }
 
     static async getMonthOrders(date){

@@ -29,12 +29,12 @@ const home = async (req, res, next) => {
         const user = req.user;
         if (!user) res.redirect('/login');
         else {
-            const date = new Date().setHours(0, 0, 0, 0);
             const summaries = await ResumeManager.getSummaries()
             let summaryDay;
             summaries.forEach(summary=>{
-                if(!summary.finish_date) summaryDay = summary; 
+                if(!summary.finish_date && summary.category === 'diary') summaryDay = summary; 
             })
+
             const carrito = await CartManager.getCartById(user.cart._id);
             let total = 0;
             carrito.products.forEach(prod => {
@@ -167,12 +167,13 @@ const getAllSummary = async (req, res, next) => {
         const data = await ResumeManager.getAllResumeByCat(cat, page);
 
         const btnInicio = true;
-        const admin = true;
+        let admin;
+        if(user.role === 'admin') admin = true;
         if (!data) res.render('summaries', {btnInicio, admin, user})
         else {
             if(cat === 'diary'){
                 data.docs.forEach(summary =>{
-                    summary.date = formatDate(summary.init_date);
+                    summary.date = formatDate(summary.init_date.init);
                 })
             }
             const summaries = data.docs;
@@ -194,29 +195,68 @@ const showSummary = async(req, res, next) => {
         const user = req.user;
         const summary = await ResumeManager.getResumeById(sid);
 
-        const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-
         let category;
         let mes;
         if(summary.category === 'monthly'){
+            const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
             category = 'mes';
             mes = months[Number(summary.month) - 1];
+            summary.amount_per_method.forEach(method =>{
+                method.method = paymentMethod(method.method);
+            })
         }
         if(summary.category === 'diary'){
+            if(summary.amount_per_method.length > 0){
+                summary.amount_per_method.forEach(method =>{
+                    method.method = paymentMethod(method.method);
+                })
+            }
             category = 'día';
-            summary.open = formatDateWithHours(summary.init_date);
-            summary.init_date = formatDate(summary.init_date);
-            if(summary.finish_date) summary.close = formatDateWithHours(summary.finish_date);
+            summary.open = formatDateWithHours(summary.init_date.init);
+            summary.init_date.init = formatDate(summary.init_date.init);
+            if(summary.finish_date) summary.close = formatDateWithHours(summary.finish_date.end);
+        }
+
+        if(summary.products){
+            let total = 0;
+            summary.products.forEach(prod =>{
+                const profit = Number(prod.product.sellingPrice * prod.quantity) - Number(prod.product.costPrice * prod.quantity)
+                prod.profit = profit.toFixed(2);
+                total  += Number(prod.profit);
+            })
+            summary.totalProfits = total.toFixed(2);
         }
         
-        const admin = true;
+        if(summary.utilityExpenses.length > 0){
+            let gastos = 0;
+            summary.utilityExpenses.forEach(expense =>{
+                gastos += Number(expense.amount)
+            })
+            const totalProfit = Number(summary.totalProfits) - gastos;
+            
+            summary.totalProfitWithCost = totalProfit.toFixed(2);
+        }
+        let admin;
+        if(user.role === 'admin') admin = true;
         const btnInicio = true;
         summary.products.sort((a, b) => b.quantity - a.quantity);
         res.render('showsummary', {user, summary, admin, btnInicio, category, mes});
     } catch (error) {
-        console.log(error)
         next(error);
     }
 }
 
-export default { login, home, register, panelOption, showProd, getOrders, showOrder, showUser, getAllSummary, showSummary }; 
+const allProducts = async(req, res, next)=>{
+    try {
+        const user = req.user;
+        let admin;
+        if(user.role === 'admin') admin = true;
+        const btnInicio = true;
+        const products = await ProductManager.getSearch();
+        res.render('allproducts', {user, btnInicio, admin, products});
+    } catch (error) {
+        next(error);
+    }
+}
+
+export default { login, home, register, panelOption, showProd, getOrders, showOrder, showUser, getAllSummary, showSummary, allProducts }; 

@@ -9,12 +9,12 @@ export default class ResumeManager{
         return await resumeModel.find().lean();
     }
 
-    static async endDayResume(amount, products, date, id, sales){
-        await resumeModel.updateOne({_id: id}, {amount: amount, products: products, finish_date: date, sales: sales});
+    static async endDayResume(amount, products, date, id, sales, methods, userId){
+        await resumeModel.updateOne({_id: id}, {amount: amount, products: products, finish_date: {end: date, seller: userId}, sales: sales, amount_per_method: methods});
     }
 
     static async getTodayResume(date){
-        return await resumeModel.findOne({date: date}).populate('products.product');
+        return await resumeModel.findOne({date: date});
     }
 
     static async getMonthResume(month, year){
@@ -22,7 +22,7 @@ export default class ResumeManager{
     }
 
     static async getResumeById(id){
-        return await resumeModel.findOne({_id: id}).populate('products.product').lean();
+        return await resumeModel.findOne({_id: id}).populate('init_date.seller').populate('finish_date.seller').lean();
     }
 
     static async getAllResumeByCat(cat, page){

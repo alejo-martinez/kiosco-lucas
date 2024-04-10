@@ -37,12 +37,16 @@ const addExpense = (e, id)=>{
             title: "<strong>Ingresar expensa</strong>",
             html: `
               <div class="div-input-expenses">
-                <input id="expenseTitle" type="text" placeholder="Nombre expensa" name="expense">
-                <input id="expenseAmount" type="number" placeholder="Monto expensa" name="amount">
+                <input id="expenseTitle" type="text" placeholder="Nombre del gasto" name="expense">
+                <input id="expenseAmount" type="number" placeholder="Monto del gasto" name="amount">
                 <button onclick="confirmExpense(event, '${id}')">Agregar</button>
               </div>
             `,
             showCloseButton: true,
-            showConfirmButton: false
-        });
+            showConfirmButton: false,
+            
+        }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.close) {
+                window.location.reload();
+            }});
 }

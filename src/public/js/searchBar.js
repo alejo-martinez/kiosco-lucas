@@ -28,13 +28,34 @@ inputSearch.addEventListener('input', async (e) => {
 
 })
 
-const searchProd = (e) => {
+const openQuantity = (e) =>{
+    e.preventDefault();
+    Swal.fire({
+        title: "<strong>Ingresa la cantidad</strong>",
+        html: `
+          <div>
+            <input id="prodQuantity" type="number" placeholder="Cantidad">
+            <button onclick="confirmQuantity(event)" onkeydown="if(event.keyCode === 13) confirmQuantity(event)">Confirmar</button>
+          </div>
+        `,
+        showCloseButton: true,
+        showConfirmButton: false
+    });
+    const inpt = document.getElementById('prodQuantity');
+    inpt.focus();
+}
+
+const confirmQuantity = (e) =>{
     e.preventDefault();
     const cid = divCart.getAttribute('data-cart');
-    const inputSearchCode = document.getElementById('inputSearch')
+    const inputSearchCode = document.getElementById('inputSearch');
+    const quantity = document.getElementById('prodQuantity'); 
     const value = inputSearchCode.value;
-    socket.emit('search', { query: value, cid: cid });
+    socket.emit('search', { query: value, cid: cid, quantity: quantity.value });
+    inputSearchCode.value = ''
+    Swal.close();
 }
+
 
 const increase = (e, id) => {
     e.preventDefault();
@@ -124,7 +145,7 @@ socket.on('result', data => {
     let html = '';
     if (data.results) {
         html += `<tr class="tr-results">
-            <td>${data.results._id}</td>
+            <td>${data.results.code}</td>
             <td>${data.results.title}</td>
             <td id="stock${data.results._id}">${data.results.stock}</td>
             <td><span>$ </span> <span>${data.results.sellingPrice}</span></td>
@@ -161,7 +182,7 @@ socket.on('updatedCart', data => {
 
         data.cart.products.forEach(product => {
             cartHTML += `<tr class="tr-results">
-            <td>${product.product._id}</td>
+            <td>${product.product.code}</td>
             <td>${product.product.title}</td>
             <td id="quantity${product.product._id}">${product.quantity}</td>
             <td>$${product.product.sellingPrice}</td>
@@ -196,8 +217,8 @@ socket.on('removeSuccess', data => {
     let cartHTML = '';
 
     data.cart.products.forEach(product => {
-        cartHTML += `<tr>
-        <td>${product.product._id}</td>
+        cartHTML += `<tr class="tr-results">
+        <td>${product.product.code}</td>
         <td>${product.product.title}</td>
         <td id="quantity${product.product._id}">${product.quantity}</td>
         <td>$${product.product.sellingPrice}</td>
@@ -232,9 +253,11 @@ socket.on('errorUpdate', data => {
 
 const cleanChange = (e) => {
     e.preventDefault();
+    const inpt = document.getElementById('inputSearch');
     const dineroAbonado = document.getElementById("abonoInput");
     document.getElementById('divChange').innerHTML = '';
     dineroAbonado.value = 0;
+    inpt.focus();
 }
 
 const showChange = (total) => {
@@ -290,6 +313,41 @@ const endSale = async (e) => {
         }
     }
 }
+
+const endSaleTotal = async(e)=>{
+    e.preventDefault();
+    const total = document.getElementById('totalPrice');
+    const optionSelect = document.getElementById('paymentMethod').value;
+
+        const response = await fetch('/api/ticket/create', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ amount: total.innerText, payment_method: optionSelect })
+        });
+        const json = await response.json();
+        if (json.status === 'success') {
+            const inptSearch = document.getElementById('inputSearch');
+            const tbody = document.getElementById('tbodyCart');
+            tbody.innerHTML = '';
+            total.innerText = 0.00;
+            inputSearch.value = '';
+            document.getElementById('bodySearch').innerHTML = '';
+            inptSearch.focus();
+            Toastify({
+                text: json.message,
+                duration: 3000
+            }).showToast();
+        }
+        if (json.status === 'error') {
+            Toastify({
+                text: json.error,
+                duration: 3000
+            }).showToast();
+        }
+    }
 
 
 const emptyCart = async (e, cid) => {
@@ -369,7 +427,7 @@ const showAlertStartDay = (e) => {
 const finishDay = async (e, id) => {
     e.preventDefault();
     const idSummary = idResume? idResume : id;
-    console.log(idSummary)
+
     const response = await fetch(`/api/resume/end/${idSummary}`, {
         method: 'PUT',
         credentials: 'include',

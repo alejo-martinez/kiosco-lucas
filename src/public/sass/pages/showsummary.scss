@@ -1,8 +1,10 @@
 .table-summary{
     border-collapse: collapse;
-    width: 80%;
+    width: 95%;
     & td, th{
-        text-align: left;
+        text-align: center;
+        font-size: 90%;
+        border: 1px solid black;
     }
 }
 
@@ -20,7 +22,22 @@
     font-size: 24px;
 }
 
+.method{
+    display: flex;
+    flex-flow: column nowrap;
+    border: 1px solid black;
+    width: fit-content;
+    padding: 4px;
+}
+
 .div{
+
+    &-methods{
+        display: flex;
+        flex-flow: column nowrap;
+        margin-top: 2rem;
+        gap: 10px;
+    }
 
     &-cashregister{
         display: flex;

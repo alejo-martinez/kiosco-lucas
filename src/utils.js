@@ -33,8 +33,8 @@ export const isValidPassword = (user, password) => {
 }
 
 export const calculateSellingPrice = (percentage, costPrice) =>{
-    const result =  costPrice * (1 + percentage / 100);
-    return Number.isInteger(result) ? result.toFixed(2) : result;
+    const result =  Number(costPrice) * (1 + Number(percentage) / 100);
+    return result.toFixed(2);
 }
 
 export const paymentMethod = (method) =>{

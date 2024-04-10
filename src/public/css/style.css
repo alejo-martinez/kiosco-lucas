@@ -303,6 +303,16 @@
   background-color: green;
   cursor: pointer; }
 
+.btn-cancel-update {
+  cursor: pointer;
+  background-color: transparent;
+  color: red; }
+
+.options-edit {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 8px; }
+
 .div-btn-back {
   display: flex;
   flex-wrap: wrap;
@@ -367,9 +377,11 @@
 
 .table-summary {
   border-collapse: collapse;
-  width: 80%; }
+  width: 95%; }
   .table-summary td, .table-summary th {
-    text-align: left; }
+    text-align: center;
+    font-size: 90%;
+    border: 1px solid black; }
 
 .table-expenses {
   border-collapse: collapse; }
@@ -380,6 +392,19 @@
   text-align: center;
   margin: 4rem 0;
   font-size: 24px; }
+
+.method {
+  display: flex;
+  flex-flow: column nowrap;
+  border: 1px solid black;
+  width: fit-content;
+  padding: 4px; }
+
+.div-methods {
+  display: flex;
+  flex-flow: column nowrap;
+  margin-top: 2rem;
+  gap: 10px; }
 
 .div-cashregister {
   display: flex;
@@ -440,6 +465,27 @@
   display: flex;
   justify-content: center;
   margin-top: 2rem; }
+
+.body-all-products {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  width: 100%; }
+
+.div-input-search-code {
+  margin-bottom: 5rem; }
+
+.hiden {
+  display: none; }
+
+.table-products {
+  border-collapse: collapse;
+  width: 100%; }
+  .table-products td, .table-products th {
+    text-align: center;
+    font-size: 90%;
+    border: 1px solid black; }
 
 * {
   box-sizing: border-box;

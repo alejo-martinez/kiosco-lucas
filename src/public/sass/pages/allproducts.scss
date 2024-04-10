@@ -1,0 +1,34 @@
+.body{
+
+    &-all-products{
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+    }
+}
+
+.div{
+
+    &-input-search-code{
+        margin-bottom: 5rem;
+    }
+}
+
+.hiden{
+    display: none;
+}
+
+.table{
+
+    &-products{
+        border-collapse: collapse;
+        width: 100%;
+        & td, th{
+            text-align: center;
+            font-size: 90%;
+            border: 1px solid black;
+        }
+    }
+}

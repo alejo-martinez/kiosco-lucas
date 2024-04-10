@@ -3,15 +3,17 @@
 
     <div class="div-prod">
         <h4 class="title-summary">Resumen del {{category}}: {{#if summary.month}} {{mes}} {{else}}
-            {{summary.init_date}} {{/if}}</h4>
+            {{summary.init_date.init}} {{/if}}</h4>
         <table class="table-summary">
             <thead>
                 <tr>
                     <th>Código</th>
                     <th>Producto</th>
-                    <th>Precio x Unidad</th>
+                    <th>Precio x Unidad Costo</th>
+                    <th>Precio x Unidad Venta</th>
                     <th>Unidades Vendidas</th>
                     <th>Importe Total</th>
+                    <th>Ganancia</th>
                 </tr>
             </thead>
             <tbody>
@@ -20,8 +22,10 @@
                     <td>{{this.product.code}}</td>
                     <td>{{this.product.title}}</td>
                     <td>${{this.product.costPrice}}</td>
+                    <td>${{this.product.sellingPrice}}</td>
                     <td>{{this.quantity}}</td>
                     <td>${{this.total}}</td>
+                    <td>${{this.profit}}</td>
                 </tr>
                 {{/each}}
             </tbody>
@@ -36,43 +40,72 @@
                     <span>Ventas totales:</span>
                     <span>{{summary.sales}}</span>
                 </div>
+                <div class="div-total-sale">
+                    <span>Ganancia bruta:</span>
+                    <span>$ {{summary.totalProfits}}</span>
+                </div>
+                {{#if summary.totalProfitWithCost}}
+                <div class="div-total-sale">
+                    <span>Ganancia neta:</span>
+                    <span>$ {{summary.totalProfitWithCost}}</span>
+                </div>
+                {{/if}}
             </div>
+            {{#if summary.amount_per_method}}
+            <div class="div-methods">
+                <h4>Medios de pago</h4>
+                {{#each summary.amount_per_method}}
+                <div class="method">
+                    <span>Método de pago: {{this.method}}</span>
+                    <span>Monto: ${{this.amount}}</span>
+                </div>
+                {{/each}}
+            </div>
+            {{/if}}
             {{#if summary.open}}
             <div class="div-cashregister">
                 <span>Apertura de caja: {{summary.open}}</span>
+                <span>Abierta por: {{summary.init_date.seller.name}}</span>
+                {{#if summary.initAmount}}
+                <span>Dinero en caja al abrir: ${{summary.initAmount}}</span>
+                {{/if}}
                 {{#if summary.close}}
                 <span>Cierre de caja: {{summary.close}}</span>
+                <span>Cerrada por: {{summary.finish_date.seller.name}}</span>
                 {{else}}
                 <span>La caja se encuentra abierta todavía</span>
                 {{/if}}
             </div>
             {{/if}}
-            {{#if summary.month}}
+
             <div class="div-expenses">
-                <span>Gasto de expensas</span>
+                <span>Gastos adicionales</span>
+                {{#if summary.utilityExpenses}}
                 <table class="table-expenses">
                     <thead>
                         <tr>
-                            <th>Expensa</th>
+                            <th>Gasto</th>
                             <th>Gasto total</th>
                         </tr>
                     </thead>
                     <tbody id="tbodySummary">
-                        {{#if summary.utilityExpenses}}
                         {{#each summary.utilityExpenses}}
                         <tr>
                             <td>{{this.expense}}</td>
                             <td>$ {{this.amount}}</td>
                         </tr>
                         {{/each}}
-                        {{/if}}
                     </tbody>
                 </table>
+                {{else}}
+                <span>Todavía no se agregaron gastos</span>
+                {{/if}}
             </div>
             <div class="btn-add-expense">
-                <button onclick="addExpense(event, '{{summary._id}}')" class="btn-generate-expense">Agregar expensa</button>
+                <button onclick="addExpense(event, '{{summary._id}}')" class="btn-generate-expense">Agregar
+                    gasto</button>
             </div>
-            {{/if}}
+
         </div>
     </div>
 </div>

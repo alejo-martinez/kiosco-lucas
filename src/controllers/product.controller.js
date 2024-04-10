@@ -1,6 +1,7 @@
 import ProductManager from "../dao/service/product.service.js";
 import ProductDTO from "../dto/productDTO.js";
 import CustomError from "../errors/custom.error.js";
+import { calculateSellingPrice } from "../utils.js";
 
 const getProductQuery = async(req, res, next)=>{
     try {
@@ -32,8 +33,22 @@ const updateProduct = async(req, res, next)=>{
         const {pid} = req.params;
         const {field, value} = req.body;
         if(!value) throw new CustomError('Missing data', 'Proporciona un valor para actualizar', 2);
-        await ProductManager.update(pid, field, value);
-        res.status(200).send({status:'success', message: 'Producto actualizado!'});
+        if(field === 'costPrice'){
+            const producto = await ProductManager.getById(pid);
+            const newPrice = calculateSellingPrice(producto.percentage, value);
+            await ProductManager.update(pid, field, value);
+            await ProductManager.update(pid, 'sellingPrice', newPrice);
+            res.status(200).send({status:'success', message: 'Producto actualizado!'});
+        } else if(field === 'percentage'){
+            const producto = await ProductManager.getById(pid);
+            const newPrice = calculateSellingPrice(value, producto.costPrice);
+            await ProductManager.update(pid, 'sellingPrice', newPrice);
+            await ProductManager.update(pid, field, value);
+            res.status(200).send({status:'success', message: 'Producto actualizado!'});
+        } else{
+            await ProductManager.update(pid, field, value);
+            res.status(200).send({status:'success', message: 'Producto actualizado!'});
+        }
     } catch (error) {
         next(error)
     }
