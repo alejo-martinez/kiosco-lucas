@@ -20,7 +20,9 @@
                     <tr>
                         <th>Código</th>
                         <th>Nombre</th>
+                        {{#unless admin}}
                         <th>Precio x Unidad Costo</th>
+                        {{/unless}}
                         <th>Precio x Unidad Venta</th>
                         <th>Stock en tienda</th>
                         <th>Stock Total</th>
@@ -31,7 +33,9 @@
                     <tr>
                         <td>{{this.code}}</td>
                         <td>{{this.title}}</td>
+                        {{#unless admin}}
                         <td>$ {{this.costPrice}}</td>
+                        {{/unless}}
                         <td>$ {{this.sellingPrice}}</td>
                         <td>{{this.stock}}</td>
                         <td>{{this.totalStock}}</td>
