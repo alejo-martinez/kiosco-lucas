@@ -99,7 +99,8 @@ io.on('connection', async (socket) => {
             const prod = await ProductManager.getBy('code', Number(data.query));
             if(prod.stock <= 0) throw new CustomError('No stock', 'Producto sin stock', 4);
             const carrito = await CartManager.getCartById(data.cid);
-            const finded = carrito.products.find(p => p.product.equals(prod._id));
+
+            const finded = carrito.products.find(p => p.product._id.equals(prod._id) );
 
             if((finded && ((Number(finded.quantity) + Number(data.quantity) > prod.stock))) || (Number(data.quantity) > prod.stock)) throw new CustomError('No stock', 'Alcanzaste el máximo de stock de este producto', 6)
             const totalPrice = Number(prod.sellingPrice) * Number(data.quantity);
