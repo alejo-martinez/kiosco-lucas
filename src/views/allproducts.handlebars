@@ -20,9 +20,9 @@
                     <tr>
                         <th>Código</th>
                         <th>Nombre</th>
-                        {{#unless admin}}
+                        {{#if admin}}
                         <th>Precio x Unidad Costo</th>
-                        {{/unless}}
+                        {{/if}}
                         <th>Precio x Unidad Venta</th>
                         <th>Stock en tienda</th>
                         <th>Stock Total</th>
@@ -33,9 +33,9 @@
                     <tr>
                         <td>{{this.code}}</td>
                         <td>{{this.title}}</td>
-                        {{#unless admin}}
+                        {{#if admin}}
                         <td>$ {{this.costPrice}}</td>
-                        {{/unless}}
+                        {{/if}}
                         <td>$ {{this.sellingPrice}}</td>
                         <td>{{this.stock}}</td>
                         <td>{{this.totalStock}}</td>
