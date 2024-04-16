@@ -34,8 +34,8 @@ const openQuantity = (e) =>{
         title: "<strong>Ingresa la cantidad</strong>",
         html: `
           <div>
-            <input id="prodQuantity" type="number" placeholder="Cantidad">
-            <button onclick="confirmQuantity(event)" onkeydown="if(event.keyCode === 13) confirmQuantity(event)">Confirmar</button>
+            <input id="prodQuantity" type="number" placeholder="Cantidad" onkeydown="if(event.keyCode === 13) confirmQuantity(event)">
+            <button onclick="confirmQuantity(event)" >Confirmar</button>
           </div>
         `,
         showCloseButton: true,
@@ -115,7 +115,7 @@ socket.on('resultTitle', data => {
     if (data.results && data.results.length > 0) {
         data.results.forEach(value => {
             html += `<tr class="tr-results">
-                    <td>${value._id}</td>
+                    <td>${value.code}</td>
                     <td>${value.title}</td>
                     <td id="stock${value._id}">${value.stock}</td>
                     <td><span>$ </span> <span>${value.sellingPrice}</span></td>
