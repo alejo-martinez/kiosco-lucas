@@ -1,3 +1,5 @@
+const socket = io();
+
 const confirmExpense = async(e, id)=>{
     e.preventDefault();
     const expense = document.getElementById('expenseTitle');
@@ -23,7 +25,7 @@ const confirmExpense = async(e, id)=>{
     </tr>`
     }
     if(json.status === 'error'){
-        console.log(json.error)
+
         Toastify({
             text: json.error,
             duration: 4000
@@ -49,4 +51,10 @@ const addExpense = (e, id)=>{
             if (result.dismiss === Swal.DismissReason.close) {
                 window.location.reload();
             }});
+}
+
+const deleteGasto = (e, id) =>{
+    e.preventDefault();
+    const data = document.getElementById(`expense${id}`);
+    socket.emit('deleteExpense', )
 }

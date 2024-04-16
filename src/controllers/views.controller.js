@@ -229,9 +229,14 @@ const showSummary = async(req, res, next) => {
         
         if(summary.utilityExpenses.length > 0){
             let gastos = 0;
-            summary.utilityExpenses.forEach(expense =>{
-                gastos += Number(expense.amount)
-            })
+            for (let index = 0; index < summary.utilityExpenses.length; index++) {
+                const element = summary.utilityExpenses[index];
+                gastos += Number(element.amount);
+                element.index = index;
+            }
+            // summary.utilityExpenses.forEach(expense =>{
+            //     gastos += Number(expense.amount)
+            // })
             const totalProfit = Number(summary.totalProfits) - gastos;
             
             summary.totalProfitWithCost = totalProfit.toFixed(2);
