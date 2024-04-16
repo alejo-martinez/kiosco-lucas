@@ -1,5 +1,25 @@
 const socket = io();
 
+const changeSellingPrice = (e) =>{
+    e.preventDefault();
+    const inptCostPrice = document.getElementById('inptCostPrice');
+    const inptSellingPrice = document.getElementById('inptSellingPrice');
+    const inptPercentage = document.getElementById('inptPercentage');
+    if(inptCostPrice.value && inptPercentage.value){
+        const calculatePrice = Number(inptCostPrice.value) * (1 + Number(inptPercentage.value)/100);
+        inptSellingPrice.value = !Number.isInteger(calculatePrice) ? calculatePrice.toFixed(2) : calculatePrice;
+    }
+}
+
+const changePercentage = (e) =>{
+    e.preventDefault();
+    const inptCostPrice = document.getElementById('inptCostPrice');
+    const inptSellingPrice = document.getElementById('inptSellingPrice');
+    const inptPercentage = document.getElementById('inptPercentage');
+    const calculatePercentage = ((Number(inptSellingPrice.value) - Number(inptCostPrice.value)) / Number(inptCostPrice.value)) * 100
+    inptPercentage.value = !Number.isInteger(calculatePercentage) ? calculatePercentage.toFixed(2) : calculatePercentage;;
+}
+
 const createProd = async (e) => {
     e.preventDefault();
     const form = document.getElementById('formAddProd');
@@ -60,7 +80,7 @@ const editProd = async (e, field, id) => {
         body: JSON.stringify({ field: field, value: input.value })
     });
     const json = await response.json();
-    console.log(json)
+
     if (json.status === 'success') {
         const divInpt = document.getElementById(`input${field}`);
         const divText = document.getElementById(`text${field}`);

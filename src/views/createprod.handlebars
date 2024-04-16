@@ -10,8 +10,12 @@
             <input type="text" name="title" id="titleInput">
         </div>
         <div class="form-field">
-            <label>Precio</label>
-            <input type="number" name="price">
+            <label>Precio de costo</label>
+            <input type="number" name="costPrice" id="inptCostPrice" >
+        </div>
+        <div class="form-field">
+            <label>Precio de venta</label>
+            <input type="number" name="sellingPrice" id="inptSellingPrice" oninput="changePercentage(event)" >
         </div>
         <div class="form-field">
             <label>Stock en tienda</label>
@@ -23,7 +27,7 @@
         </div>
         <div class="form-field">
             <label>Porcentaje de ganancia</label>
-            <input type="number" name="percentage">
+            <input type="number" name="percentage" id="inptPercentage" oninput="changeSellingPrice(event)">
         </div>
         <div class="form-field">
             <label>Código</label>

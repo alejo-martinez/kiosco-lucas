@@ -91,9 +91,11 @@
                     <tbody id="tbodySummary">
                         {{#each summary.utilityExpenses}}
                         <tr>
-                            <td>{{this.expense}}</td>
+                            <td data-index="{{this.index}}" id="expense{{summary._id}}">{{this.expense}}</td>
                             <td>$ {{this.amount}}</td>
+                            {{!-- <td><button onclick="deleteGasto(event, "{{summary._id}}")">Borrar</button></td> --}}
                         </tr>
+
                         {{/each}}
                     </tbody>
                 </table>
@@ -101,13 +103,15 @@
                 <span>Todavía no se agregaron gastos</span>
                 {{/if}}
             </div>
+            {{#if admin}}
             <div class="btn-add-expense">
                 <button onclick="addExpense(event, '{{summary._id}}')" class="btn-generate-expense">Agregar
                     gasto</button>
             </div>
+            {{/if}}
 
         </div>
     </div>
 </div>
-
+<script src="/socket.io/socket.io.js"></script>
 <script src="/js/crudsummary.js"></script>
