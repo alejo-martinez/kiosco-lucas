@@ -12,7 +12,9 @@
 
         <div class="div-prods">
             <span>Producto: {{this.product.title}}</span>
+            {{#if ../admin}}
             <span>Precio de costo unitario: ${{this.product.costPrice}}</span>
+            {{/if}}
             <span>Precio de venta unitario: ${{this.product.sellingPrice}}</span>
             <span>Cantidad comprada: {{this.quantity}}</span>
             <span>Monto total del producto: ${{this.totalPrice}}</span>

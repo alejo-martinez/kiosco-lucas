@@ -242,7 +242,9 @@
 
 .container-update {
   display: flex;
-  flex-flow: column wrap;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
   align-content: center;
   flex: 1;
   margin-top: 3rem; }
