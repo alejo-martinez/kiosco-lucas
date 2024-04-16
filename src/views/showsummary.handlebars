@@ -9,11 +9,15 @@
                 <tr>
                     <th>Código</th>
                     <th>Producto</th>
+                    {{#if admin}}
                     <th>Precio x Unidad Costo</th>
+                    {{/if}}
                     <th>Precio x Unidad Venta</th>
                     <th>Unidades Vendidas</th>
                     <th>Importe Total</th>
+                    {{#if admin}}
                     <th>Ganancia</th>
+                    {{/if}}
                 </tr>
             </thead>
             <tbody>
@@ -21,11 +25,15 @@
                 <tr>
                     <td>{{this.product.code}}</td>
                     <td>{{this.product.title}}</td>
+                    {{#if ../admin}}
                     <td>${{this.product.costPrice}}</td>
+                    {{/if}}
                     <td>${{this.product.sellingPrice}}</td>
                     <td>{{this.quantity}}</td>
                     <td>${{this.total}}</td>
+                    {{#if ../admin}}
                     <td>${{this.profit}}</td>
+                    {{/if}}
                 </tr>
                 {{/each}}
             </tbody>
@@ -40,6 +48,7 @@
                     <span>Ventas totales:</span>
                     <span>{{summary.sales}}</span>
                 </div>
+                {{#if admin}}
                 <div class="div-total-sale">
                     <span>Ganancia bruta:</span>
                     <span>$ {{summary.totalProfits}}</span>
@@ -49,6 +58,7 @@
                     <span>Ganancia neta:</span>
                     <span>$ {{summary.totalProfitWithCost}}</span>
                 </div>
+                {{/if}}
                 {{/if}}
             </div>
             {{#if summary.amount_per_method}}

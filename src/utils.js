@@ -12,13 +12,29 @@ export const cookieExtractor = (req) =>{
     return token;
 }
 
+
 export const formatDate = (date)=> {
-    return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
+    const options = { 
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        timeZone: 'America/Argentina/Buenos_Aires' // Especifica la zona horaria de Argentina
+    };
+    return new Date(date).toLocaleDateString('es-AR', options);
 };
 
+
 export const formatDateWithHours = (date)=> {
-    const dateString = new Date(date)
-    return `${dateString.getDate()}/${dateString.getMonth() + 1}/${dateString.getFullYear()} ${String(dateString.getHours()).padStart(2, '0')}:${String(dateString.getMinutes()).padStart(2, '0')}`;
+    const options = { 
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false, // Mostrar en formato de 24 horas
+        timeZone: 'America/Argentina/Buenos_Aires' // Especifica la zona horaria de Argentina
+    };
+    return new Date(date).toLocaleDateString('es-AR', options);
 };
 
 export const generateToken = (user) => {
