@@ -101,9 +101,11 @@
                     <tbody id="tbodySummary">
                         {{#each summary.utilityExpenses}}
                         <tr>
-                            <td data-index="{{this.index}}" id="expense{{summary._id}}">{{this.expense}}</td>
+                            <td data-index="{{this.index}}" id="expense{{../summary._id}}">{{this.expense}}</td>
                             <td>$ {{this.amount}}</td>
-                            {{!-- <td><button onclick="deleteGasto(event, "{{summary._id}}")">Borrar</button></td> --}}
+                            {{#if ../admin}}
+                            <td><button onclick="deleteGasto(event, '{{../summary._id}}')">Borrar</button></td>
+                            {{/if}}
                         </tr>
 
                         {{/each}}

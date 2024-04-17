@@ -234,9 +234,7 @@ const showSummary = async(req, res, next) => {
                 gastos += Number(element.amount);
                 element.index = index;
             }
-            // summary.utilityExpenses.forEach(expense =>{
-            //     gastos += Number(expense.amount)
-            // })
+
             const totalProfit = Number(summary.totalProfits) - gastos;
             
             summary.totalProfitWithCost = totalProfit.toFixed(2);
@@ -258,10 +256,30 @@ const allProducts = async(req, res, next)=>{
         if(user.role === 'admin') admin = true;
         const btnInicio = true;
         const products = await ProductManager.getSearch();
+        products.sort((a, b) => {
+            const nombreA = a.title.toUpperCase();
+            const nombreB = b.title.toUpperCase();
+            if (nombreA < nombreB) {
+                return -1; 
+            }
+            if (nombreA > nombreB) {
+                return 1;
+            }
+            return 0;
+        });
+        products.forEach(prod =>{
+            let moneyInvested;
+            let productsToSell;
+            moneyInvested = Number(prod.costPrice) * Number(prod.totalStock);
+            prod.moneyInvested = !Number.isInteger(moneyInvested)? moneyInvested.toFixed(2) : moneyInvested;
+            productsToSell = Number(moneyInvested) / Number(prod.sellingPrice);
+            prod.productsToSell = Math.ceil(productsToSell);
+        })
         res.render('allproducts', {user, btnInicio, admin, products});
     } catch (error) {
         next(error);
     }
 }
+
 
 export default { login, home, register, panelOption, showProd, getOrders, showOrder, showUser, getAllSummary, showSummary, allProducts }; 

@@ -53,8 +53,26 @@ const addExpense = (e, id)=>{
             }});
 }
 
-const deleteGasto = (e, id) =>{
+const deleteGasto = async(e, id) =>{
     e.preventDefault();
     const data = document.getElementById(`expense${id}`);
-    socket.emit('deleteExpense', )
+
+    const response = await fetch(`/api/resume/delete/expense/${id}`,{
+        method:'PUT',
+        credentials:'include',
+        headers:{
+            'Content-type': 'application/json'
+        },
+        body: JSON.stringify({index: data.dataset.index})
+    });
+    const json = await response.json();
+    if(json.status === 'success'){
+        window.location.reload();
+    }
+    if(json.status === 'error'){
+        Toastify({
+            text: json.error,
+            duration: 3000
+        }).showToast()
+    }
 }

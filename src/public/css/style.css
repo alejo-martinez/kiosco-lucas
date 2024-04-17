@@ -475,6 +475,9 @@
   align-items: center;
   width: 100%; }
 
+#inputCodeProducts {
+  margin-top: 4rem; }
+
 .div-input-search-code {
   margin-bottom: 5rem; }
 
