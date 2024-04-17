@@ -106,6 +106,17 @@ const addExpense = async(req, res, next)=>{
     }
 }
 
+const deleteExpense = async(req, res, next)=>{
+    try {
+        const {rid} = req.params;
+        const {index} = req.body;
+        await ResumeManager.deleteExpense(rid, index);
+        return res.status(200).send({status:'success', message: 'Gasto eliminado!'})
+    } catch (error) {
+        next(error);
+    }
+}
 
 
-export default {createSummary, endDay, addExpense};
+
+export default {createSummary, endDay, addExpense, deleteExpense};

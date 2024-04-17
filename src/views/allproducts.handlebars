@@ -4,7 +4,7 @@
     <div class="body-all-products">
 
 
-        <div class="div-input-search-code">
+        <div class="div-input-search-code" id="inputCodeProducts">
             <form>
                 <input type="text" id="inputSearchCode">
                 <button onclick="searchProdCode(event)">Buscar</button>
@@ -26,6 +26,10 @@
                         <th>Precio x Unidad Venta</th>
                         <th>Stock en tienda</th>
                         <th>Stock Total</th>
+                        {{#if admin}}
+                        <th>Total invertido</th>
+                        <th>Total a vender</th>
+                        {{/if}}
                     </tr>
                 </thead>
                 <tbody>
@@ -39,6 +43,10 @@
                         <td>$ {{this.sellingPrice}}</td>
                         <td>{{this.stock}}</td>
                         <td>{{this.totalStock}}</td>
+                        {{#if ../admin}}
+                        <td>$ {{this.moneyInvested}}</td>
+                        <td>{{this.productsToSell}}</td>
+                        {{/if}}
                     </tr>
                     {{/each}}
                 </tbody>

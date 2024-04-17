@@ -40,4 +40,10 @@ export default class ResumeManager{
     static async addExpense(id, data){
         await resumeModel.updateOne({_id : id }, {$push:{utilityExpenses: data}});
     }
+
+    static async deleteExpense(id, index){
+        const resume = await resumeModel.findOne({_id: id}).lean();
+        resume.utilityExpenses.splice(index, 1);
+        await resumeModel.updateOne({_id: id}, {utilityExpenses: resume.utilityExpenses});
+    }
 }
