@@ -33,7 +33,13 @@ const app = express();
 
 const httpServer = app.listen(parseInt(config.port), () => console.log(`Listening on port ${config.port}`));
 
-const io = new Server(httpServer);
+const io = new Server(httpServer, {
+    cors:{
+        origin:config.urlFront,
+        methods:['GET', 'POST'],
+        credentials:true
+    }
+});
 
 app.use(session({
     store: MongoStore.create({
@@ -53,7 +59,7 @@ app.use(cookieParser(config.cookieCode));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({origin:'http://localhost:3000', credentials:true}));
+app.use(cors({origin:config.urlFront, credentials:true}));
 
 app.use('/static', express.static(__dirname + '/public'));
 app.use(express.static(path.join(__dirname, 'views')));
@@ -66,7 +72,7 @@ app.use('/api/cart', cartRouter);
 app.use('/api/ticket', ticketRouter);
 app.use('/api/user', userRouter);
 app.use('/api/resume', resumeRouter);
-app.use('/', viewsRouter);
+// app.use('/', viewsRouter);
 
 app.engine('handlebars', handlebars.engine());
 
@@ -96,6 +102,7 @@ io.on('connection', async (socket) => {
 
     socket.on('search', async (data) => {
         try {
+            console.log(data)
             const prod = await ProductManager.getBy('code', Number(data.query));
             if(prod.stock <= 0) throw new CustomError('No stock', 'Producto sin stock', 4);
             const carrito = await CartManager.getCartById(data.cid);

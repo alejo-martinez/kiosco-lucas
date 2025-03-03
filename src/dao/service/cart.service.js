@@ -31,6 +31,6 @@ export default class CartManager{
     }
 
     static async emptyCart(cid){
-        await cartModel.updateOne({_id: cid}, {$set: { products: [] } });
+        return await cartModel.findOneAndUpdate({_id: cid}, {$set: { products: [] } }, {new:true});
     }
 }

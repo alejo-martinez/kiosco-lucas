@@ -3,6 +3,7 @@ import { Router } from "express";
 
 const router = Router();
 
+router.get('/:cid', cartController.getCart);
 router.post('/create', cartController.createCart);
 router.delete('/empty/:cid', cartController.emptyCart);
 

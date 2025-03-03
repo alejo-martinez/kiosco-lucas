@@ -36,8 +36,9 @@ const createTicket = async(req, res, next)=>{
                 await ProductManager.update(finded._id, 'stock', newQuantity);
             }
         }
-        await CartManager.emptyCart(user.cart._id);
-        res.status(200).send({status:'success', message: 'Pago realizado!'});
+        const updated = await CartManager.emptyCart(user.cart._id);
+        
+        res.status(200).send({status:'success', message: 'Pago realizado!', payload: updated});
     } catch (error) {
         next(error);
     }

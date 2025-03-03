@@ -10,16 +10,26 @@ const createCart = async(req, res, next)=>{
     }
 }
 
-const emptyCart = async(req, res, next)=>{
+const getCart = async(req, res, next)=>{
     try {
         const {cid} = req.params;
         const cart = await CartManager.getCartById(cid);
-        if(cart.products.length === 0) throw new CustomError('Conflict', 'El  carrito ya está vacío', 6);
-        await CartManager.emptyCart(cid);
-        return res.status(200).send({status:'success', message: 'Carrito vaciado!'});
+        return res.status(200).send({status:'success', payload:cart});
     } catch (error) {
         next(error);
     }
 }
 
-export default {createCart, emptyCart};
+const emptyCart = async(req, res, next)=>{
+    try {
+        const {cid} = req.params;
+        const cart = await CartManager.getCartById(cid);
+        if(cart.products.length === 0) throw new CustomError('Conflict', 'El  carrito ya está vacío', 6);
+        const newCart = await CartManager.emptyCart(cid);
+        return res.status(200).send({status:'success', message: 'Carrito vaciado!', payload:newCart});
+    } catch (error) {
+        next(error);
+    }
+}
+
+export default {createCart, emptyCart, getCart};
