@@ -35,7 +35,7 @@ const logOut = async (req, res, next) => {
                 // res.send({ status: 'error', message: 'No pudimos cerrar la sesion: ' + error });
                 return next(error);
             }
-                res.clearCookie('accesToken').send({ status: 'success', message: 'Sesión cerrada con éxito !' })
+                res.clearCookie('accesToken', {sameSite:'None', secure:true}).send({ status: 'success', message: 'Sesión cerrada con éxito !' })
         })
     } catch (error) {
         next(error);
