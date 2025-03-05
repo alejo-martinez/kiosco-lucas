@@ -102,8 +102,9 @@ io.on('connection', async (socket) => {
 
     socket.on('search', async (data) => {
         try {
-            console.log(data)
             const prod = await ProductManager.getBy('code', Number(data.query));
+            if(!prod) throw new CustomError('No data', 'El producto no existe', 4);
+            console.log(`producto: ${prod}`)
             if(prod.stock <= 0) throw new CustomError('No stock', 'Producto sin stock', 4);
             const carrito = await CartManager.getCartById(data.cid);
 
@@ -121,6 +122,16 @@ io.on('connection', async (socket) => {
             
         } catch (error) {
             socket.emit('errorUpdate', {error: error.message})
+        }
+    })
+
+    socket.on('searchByCode', async(data)=>{
+        try {
+            const prod = await  ProductManager.getBy('code',  Number(data.code));
+            if(!prod) throw new CustomError('No data', 'El producto no existe', 4);
+            io.emit('resultTitle', {results: [prod]});
+        } catch (error) {
+            socket.emit('errorUpdate', {error: error.message});
         }
     })
 
