@@ -20,6 +20,17 @@ const getCart = async(req, res, next)=>{
     }
 }
 
+const removeProductById = async(req, res, next)=>{
+    try {
+        const {cid} = req.params;
+        const {pid} = req.body;
+        const updatedCart = await CartManager.removeProduct(cid, pid);
+        return res.status(200).send({status:'success', payload:updatedCart});
+    } catch (error) {
+        next(error);
+    }
+}
+
 const emptyCart = async(req, res, next)=>{
     try {
         const {cid} = req.params;
@@ -32,4 +43,4 @@ const emptyCart = async(req, res, next)=>{
     }
 }
 
-export default {createCart, emptyCart, getCart};
+export default {createCart, emptyCart, getCart, removeProductById};
