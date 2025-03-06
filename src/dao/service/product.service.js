@@ -22,6 +22,10 @@ export default class  ProductManager{
         await productModel.create(prod);
     }
 
+    static async updateFull(id, prod){
+        return await productModel.findOneAndUpdate({_id: id}, prod);
+    }
+
     static async update(id, key, value){
         await productModel.updateOne({_id: id}, {$set: {[key]: value}});
     }

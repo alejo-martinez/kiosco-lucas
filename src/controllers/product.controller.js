@@ -6,11 +6,23 @@ import { calculateSellingPrice } from "../utils.js";
 const getProductQuery = async(req, res, next)=>{
     try {
         const {query} = req.query;
-        const productos = await ProductManager.getAll();
-        if(productos){
-            const prodsFilter = productos.filter((prod) => prod.title.includes(query));
-            res.status(200).send({status: 'success', payload: prodsFilter});
+        const productos = await ProductManager.getAll(query);
+        if(!productos){
+            throw new CustomError('No data', 'No hay productos disponibles', 4);
+            // const prodsFilter = productos.filter((prod) => prod.title.includes(query));
         }
+        return res.status(200).send({status: 'success', payload: productos});
+    } catch (error) {
+        next(error);
+    }
+}
+
+const getProductById = async(req, res, next)=>{
+    try {
+        const {pid} = req.params;
+        const producto = await ProductManager.getById(pid);
+        if(!producto) throw new CustomError('No data', 'El producto no existe', 4);
+        return res.status(200).send({status:'success', payload:producto});
     } catch (error) {
         next(error);
     }
@@ -24,6 +36,18 @@ const createProduct = async(req, res, next)=>{
         const prod = new ProductDTO(title, costPrice, stock, totalStock, code, percentage, sellingPrice);
         await ProductManager.create(prod);
         res.status(200).send({status: 'success', message:'Producto creado!'})
+    } catch (error) {
+        next(error);
+    }
+}
+
+const updateAllProduct = async(req, res, next)=>{
+    try {
+        const {pid} = req.params;
+        const {prod} = req.body;
+        const newProduct = await ProductManager.updateFull(pid, prod);
+        console.log(prod)
+        return res.status(200).send({status:'success', payload: newProduct, message: 'Producto actualizado!'});
     } catch (error) {
         next(error);
     }
@@ -55,4 +79,4 @@ const updateProduct = async(req, res, next)=>{
     }
 }
 
-export default {getProductQuery, createProduct, updateProduct};
+export default {getProductQuery, createProduct, updateProduct, getProductById, updateAllProduct};
