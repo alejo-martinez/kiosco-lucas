@@ -45,8 +45,9 @@ const updateAllProduct = async(req, res, next)=>{
     try {
         const {pid} = req.params;
         const {prod} = req.body;
+        const missingFields =  Object.values(prod).every((valor) => valor !== null && valor !== undefined && valor !== "");
+        if(!prod || !missingFields) throw new CustomError('Missing data', 'No puede haber campos vacíos', 2);
         const newProduct = await ProductManager.updateFull(pid, prod);
-        console.log(prod)
         return res.status(200).send({status:'success', payload: newProduct, message: 'Producto actualizado!'});
     } catch (error) {
         next(error);
@@ -79,4 +80,15 @@ const updateProduct = async(req, res, next)=>{
     }
 }
 
-export default {getProductQuery, createProduct, updateProduct, getProductById, updateAllProduct};
+const deleteProduct = async(req, res, next)=>{
+    try {
+        const {pid} = req.params;
+        if(!pid) throw new CustomError('No data', 'Missing id', 4);
+        await ProductManager.delete(pid);
+        return res.status(200).send({status:'success', message: 'Producto eliminado !'});
+    } catch (error) {
+        next(error);
+    }
+}
+
+export default {getProductQuery, createProduct, updateProduct, getProductById, updateAllProduct, deleteProduct};
