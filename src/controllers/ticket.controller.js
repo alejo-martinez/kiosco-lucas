@@ -13,6 +13,18 @@ const getAllTickets = async(req, res, next)=>{
     }
 }
 
+const getTicketById = async(req, res, next)=>{
+    try {
+        const {tid} = req.params;
+        const ticket = await TicketManager.getById(tid);
+        console.log(ticket)
+        if(!ticket) throw new CustomError('No data', 'No se encontró una venta para el id especificado', 4);
+        return res.status(200).send({status:'success', payload:ticket});
+    } catch (error) {
+        next(error);
+    }
+}
+
 const createTicket = async(req, res, next)=>{
     try {
         const {amount, payment_method} = req.body;
@@ -44,4 +56,4 @@ const createTicket = async(req, res, next)=>{
     }
 }
 
-export default {getAllTickets, createTicket};
+export default {getAllTickets, createTicket, getTicketById};
