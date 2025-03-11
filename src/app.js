@@ -83,7 +83,9 @@ io.on('connection', async (socket) => {
 
     socket.on('searchCodeUpdate', async(data)=>{
         try {
-            const prod = await ProductManager.getBy('code', Number(data.query));
+
+            const prod = await ProductManager.getBy('code', Number(data.code));
+            if(!prod) throw new CustomError('No data', 'No se encontró un producto', 4);
             io.emit('resultCodeUpdate', {producto: prod});
         } catch (error) {
             io.emit('errorCodeUpdate', {error: error.message})
@@ -104,7 +106,7 @@ io.on('connection', async (socket) => {
         try {
             const prod = await ProductManager.getBy('code', Number(data.query));
             if(!prod) throw new CustomError('No data', 'El producto no existe', 4);
-            console.log(`producto: ${prod}`)
+            
             if(prod.stock <= 0) throw new CustomError('No stock', 'Producto sin stock', 4);
             const carrito = await CartManager.getCartById(data.cid);
 
@@ -136,6 +138,7 @@ io.on('connection', async (socket) => {
     })
 
     socket.on('searchTitle', async (data) => {
+        
         const products = await ProductManager.getSearch();
         if (!data.query) io.emit('result', { empty: true });
         else {
@@ -143,6 +146,10 @@ io.on('connection', async (socket) => {
             io.emit('resultTitle', { results: prodsFilter });
         }
     })
+
+    // socket.on('searchAndUpdate', async(data)=>{
+
+    // })
 
     socket.on('addToCart', async (data) => {
         try {

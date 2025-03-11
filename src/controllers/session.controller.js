@@ -5,7 +5,7 @@ const login = async (req, res, next) => {
     try {
         const user = req.user;
         const accesToken = generateToken(user);
-        return res.cookie('accesToken', accesToken, { maxAge: 6 * 60 * 60 * 8000, signed: true, httpOnly: true, secure: true, sameSite: 'None' }).send({ status: 'success', message: 'Logueado !', payload: user });
+        return res.cookie('accesToken', accesToken, { maxAge: 100 * 365 * 24 * 60 * 60 * 1000, signed: true, httpOnly: true, secure: true, sameSite: 'None' }).send({ status: 'success', message: 'Logueado !', payload: user });
     } catch (error) {
         next(error);
     }
