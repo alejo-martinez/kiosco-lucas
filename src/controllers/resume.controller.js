@@ -3,6 +3,29 @@ import { TicketManager } from "../dao/service/ticket.service.js";
 import CustomError from "../errors/custom.error.js";
 import { formatDate } from "../utils.js";
 
+const getSummaries = async(req, res, next)=>{
+    try {
+        const {cat} = req.params;
+        const {page=1} = req.query;
+        const summaries = await ResumeManager.getAllResumeByCat(cat, page);
+        if(!summaries) throw new CustomError('No data', 'No hay resúmenes disponibles', 4);
+        return res.status(200).send({status:'success', payload:summaries});
+    } catch (error) {
+        next(error);
+    }
+}
+
+const getSummaryById = async(req, res, next)=>{
+    try {
+        const {sid} = req.params;
+        const summary = await ResumeManager.getResumeById(sid);
+        if(!summary) throw new CustomError('No data', 'No existe el resumen', 4);
+        return res.status(200).send({status:'success', payload:summary});
+    } catch (error) {
+        next(error);
+    }
+}
+
 const createSummary = async(req, res, next)=>{
     try {
         const {cat} = req.params;
@@ -88,7 +111,7 @@ const endDay = async(req, res, next) =>{
         })
         totalAmount = totalAmount.toFixed(2);
         await ResumeManager.endDayResume(totalAmount, arrayProds, date, rid, orders.length, arrayMethods, user._id);
-        res.status(200).send({status:'success', message: 'Día terminado !'})
+        return res.status(200).send({status:'success', message: 'Día terminado !'})
     } catch (error) {
         next(error);
     }
@@ -119,4 +142,4 @@ const deleteExpense = async(req, res, next)=>{
 
 
 
-export default {createSummary, endDay, addExpense, deleteExpense};
+export default {createSummary, endDay, addExpense, deleteExpense, getSummaries, getSummaryById};

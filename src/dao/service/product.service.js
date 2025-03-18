@@ -1,6 +1,7 @@
 import { productModel } from "../models/product.model.js";
 
 export default class  ProductManager{
+
     static async getAll(page){
         const {docs, hasPrevPage, hasNextPage, prevPage, nextPage, totalPages} = await productModel.paginate({}, {lean: true, limit: 12, page});
         return {docs, hasPrevPage, hasNextPage, prevPage, nextPage, totalPages, page};    

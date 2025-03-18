@@ -3,6 +3,17 @@ import ProductDTO from "../dto/productDTO.js";
 import CustomError from "../errors/custom.error.js";
 import { calculateSellingPrice } from "../utils.js";
 
+const getAll = async(req, res, next)=>{
+    try {
+        const products = await ProductManager.getSearch();
+        if(!products) throw new CustomError('No data', 'No hay productos disponibles', 4);
+        products.sort((a, b) => a.title.localeCompare(b.title));
+        return res.status(200).send({status:'success', payload: products});
+    } catch (error) {
+        next(error);
+    }
+}
+
 const getProductQuery = async(req, res, next)=>{
     try {
         const {query} = req.query;
@@ -91,4 +102,4 @@ const deleteProduct = async(req, res, next)=>{
     }
 }
 
-export default {getProductQuery, createProduct, updateProduct, getProductById, updateAllProduct, deleteProduct};
+export default {getProductQuery, createProduct, updateProduct, getProductById, updateAllProduct, deleteProduct, getAll};
