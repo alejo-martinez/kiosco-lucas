@@ -153,6 +153,7 @@ io.on('connection', async (socket) => {
     // })
 
     socket.on('addToCart', async (data) => {
+        console.log(data)
         try {
             const producto = await ProductManager.getById(data.pid);
             const totalPrice = producto.sellingPrice * data.quantity;
