@@ -95,6 +95,7 @@ io.on('connection', async (socket) => {
     socket.on('searchCode', async(data)=>{
         try {
             const prod = await ProductManager.getBy('code', Number(data.query));
+            console.log(prod)
             io.emit('resultCode', {producto: prod});
         } catch (error) {
             io.emit('errorCode', {error: error.message})
