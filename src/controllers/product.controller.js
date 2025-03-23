@@ -42,7 +42,6 @@ const getProductById = async(req, res, next)=>{
 const createProduct = async(req, res, next)=>{
     try {
         const {title, stock, costPrice, totalStock, code, percentage, sellingPrice} = req.body;
-        console.log(req.body)
         if(!title || !stock || !costPrice || !totalStock || !code || !percentage ) throw new CustomError('Missing fields', 'Debes completar todos los campos', 2);
         const prod = new ProductDTO(title, costPrice, stock, totalStock, code, percentage, sellingPrice);
         await ProductManager.create(prod);

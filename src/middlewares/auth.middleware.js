@@ -12,7 +12,7 @@ export const authToken = (req, res, next) => {
         jwt.verify(token, config.jwtSecret, (error, credentials) => {
             if (error) return res.status(403).send({status:'error', error: 'not authorized' })
             else {
-                req.user = credentials.user;
+                req.user = credentials.userId;
                 next()
             }
         });

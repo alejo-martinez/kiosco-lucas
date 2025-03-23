@@ -20,7 +20,7 @@ const initPassport = ()=> {
         secretOrKey: config.jwtSecret
     }, async(jwt_payload, done)=>{
         try {
-            return done(null, jwt_payload.user)
+            return done(null, jwt_payload.userId)
         } catch (error) {
             done(error)
         }

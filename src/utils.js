@@ -6,8 +6,9 @@ import config from './config/config.js';
 
 export const cookieExtractor = (req) =>{
     let token=null;
-    if(req && req.signedCookies){
-        token = req.signedCookies['accesToken']
+    // console.log(req.cookies)
+    if(req && req.cookies){
+        token = req.cookies.accesToken
     }
     return token;
 }
@@ -38,7 +39,7 @@ export const formatDateWithHours = (date)=> {
 };
 
 export const generateToken = (user) => {
-    const token = jwt.sign({ user }, config.jwtSecret, { expiresIn: '24h' });
+    const token = jwt.sign({ userId: user._id }, config.jwtSecret, { expiresIn: '24h' });
     return token;
 }
 
