@@ -11,7 +11,7 @@ export default class UserManager{
     }
 
     static async getBy(key, value){
-        return await userModel.findOne({[key]:value}).populate('cart').populate({path: 'cart', populate:{path:'products.product', model:'products'}}).lean();
+        return await userModel.findOne({[key]:value}).lean();
     }
 
     static async getWithPassword(username){
