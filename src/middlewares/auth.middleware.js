@@ -1,6 +1,7 @@
 import config from "../config/config.js";
 import jwt from 'jsonwebtoken';
 import { cookieExtractor } from "../utils.js";
+import UserManager from "../dao/service/user.service.js";
 
 export const authToken = (req, res, next) => {
     const token = cookieExtractor(req);
@@ -19,10 +20,12 @@ export const authToken = (req, res, next) => {
     }
 }
 
-export const adminUser = (req, res, next) =>{
+export const adminUser = async(req, res, next) =>{
     const admin = 'admin';
     try {
-        if(req.user && req.user.role === admin) next();
+        
+        const user = await UserManager.getById(req.user);
+        if(user && user.role === admin) next();
         else res.render('error', {error: 'No tienes los permisos para ver esta página.'}) 
         // throw new Error( 'No tienes los permisos para realizar esta acción');
     } catch (error) {

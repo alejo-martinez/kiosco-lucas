@@ -6,7 +6,6 @@ const login = async (req, res, next) => {
     try {
         const user = req.user;
         const accesToken = generateToken(user);
-        console.log(accesToken)
         return res.cookie('accesToken', accesToken, { maxAge: 2 * 60 * 60 * 1000, httpOnly: true, secure: true, sameSite: 'None' }).send({ status: 'success', message: 'Logueado !', payload: user });
     } catch (error) {
         next(error);
@@ -25,7 +24,7 @@ const current = async (req, res, next) => {
     try {
         const userId = req.user;
         const user = await UserManager.getById(userId);
-        console.log(user)
+
         return res.status(200).send({ status: 'success', payload: user });
     } catch (error) {
         next(error);

@@ -1,6 +1,16 @@
 import UserManager from "../dao/service/user.service.js";
 import CustomError from "../errors/custom.error.js";
 
+const getAll = async(req, res, next)=>{
+    try {
+        const users = await UserManager.getAll();
+        if(!users) throw new CustomError('No data', 'No hay usuarios', 4);
+        return res.status(200).send({status:'success', payload:users});
+    } catch (error) {
+        next(error);
+    }
+}
+
 const updateUser = async(req, res, next)=>{
     try {
         const {uid} = req.params;
@@ -13,4 +23,4 @@ const updateUser = async(req, res, next)=>{
     }
 }
 
-export default {updateUser};
+export default {updateUser, getAll};

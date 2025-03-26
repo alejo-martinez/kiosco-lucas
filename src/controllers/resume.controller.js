@@ -20,6 +20,12 @@ const getSummaryById = async(req, res, next)=>{
         const {sid} = req.params;
         const summary = await ResumeManager.getResumeById(sid);
         if(!summary) throw new CustomError('No data', 'No existe el resumen', 4);
+        summary.products.forEach((product)=>{
+            let totalCostPrice = Number(product.product.costPrice) * Number(product.quantity);
+            product.ganancia = Number(product.total) - totalCostPrice;
+            product.porcentajeGanancia = Number(((product.product.sellingPrice - product.product.costPrice) / product.product.costPrice) * 100);
+        })
+        console.log(summary)
         return res.status(200).send({status:'success', payload:summary});
     } catch (error) {
         next(error);
@@ -33,7 +39,7 @@ const createSummary = async(req, res, next)=>{
         if(cat === 'diary'){
             const user = req.user;
             const {initAmount} = req.body;
-            const newResume = await ResumeManager.createResume({init_date: {init: date, seller: user._id}, category: cat, initAmount: parseInt(initAmount), sales: 0});
+            const newResume = await ResumeManager.createResume({init_date: {init: date, seller: user}, category: cat, initAmount: parseInt(initAmount), sales: 0});
             return res.status(200).send({status:'success', message: 'Día comenzado !', id: newResume._id});
         }
         if(cat === 'monthly'){
@@ -110,7 +116,7 @@ const endDay = async(req, res, next) =>{
             meth.amount = meth.amount.toFixed(2)
         })
         totalAmount = totalAmount.toFixed(2);
-        await ResumeManager.endDayResume(totalAmount, arrayProds, date, rid, orders.length, arrayMethods, user._id);
+        await ResumeManager.endDayResume(totalAmount, arrayProds, date, rid, orders.length, arrayMethods, user);
         return res.status(200).send({status:'success', message: 'Día terminado !'})
     } catch (error) {
         next(error);
