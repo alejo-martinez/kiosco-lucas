@@ -2,9 +2,23 @@ import { productModel } from "../models/product.model.js";
 
 export default class  ProductManager{
 
-    static async getAll(page){
-        const {docs, hasPrevPage, hasNextPage, prevPage, nextPage, totalPages} = await productModel.paginate({}, {lean: true, limit: 12, page});
-        return {docs, hasPrevPage, hasNextPage, prevPage, nextPage, totalPages, page};    
+    static async getAll(page, filter, valueFilter){
+        let query = {};
+    
+        if (filter && valueFilter !== undefined) {
+            // Si el filtro es "stock" y queremos filtrar stock <= valueFilter
+            if (filter === "stock") {
+                query[filter] = { $lte: Number(valueFilter) }; 
+            } else {
+                query[filter] = valueFilter; 
+            }
+        }
+    
+        // Ejecutar la consulta con paginación
+        const { docs, hasPrevPage, hasNextPage, prevPage, nextPage, totalPages } = 
+            await productModel.paginate(query, { lean: true, limit: 12, page });
+    
+        return { docs, hasPrevPage, hasNextPage, prevPage, nextPage, totalPages, page }; 
     }
 
     static async getSearch(){

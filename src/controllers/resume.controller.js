@@ -92,9 +92,14 @@ const endDay = async(req, res, next) =>{
         const orders = await TicketManager.getOrdersDate(summaryNow.init_date.init, date);
         const arrayProds = [];
         const arrayMethods = [];
+        // const sellsPerUser = [];
         let totalAmount = 0;
         orders.forEach(order =>{
             totalAmount += Number(order.amount);
+            // const userExist = sellsPerUser.findIndex(user => user.seller === order.seller);
+            // if(userExist >= 0){
+            //     sellsPerUser[userExist]
+            // }
             const existMethod = arrayMethods.findIndex(method => method.method === order.payment_method);
             if(existMethod !== -1){
                 arrayMethods[existMethod].amount += Number(order.amount);
@@ -117,7 +122,7 @@ const endDay = async(req, res, next) =>{
         })
         totalAmount = totalAmount.toFixed(2);
         await ResumeManager.endDayResume(totalAmount, arrayProds, date, rid, orders.length, arrayMethods, user);
-        return res.status(200).send({status:'success', message: 'Día terminado !'})
+        return res.status(200).send({status:'success', message: 'Día terminado !', resumeId: rid})
     } catch (error) {
         next(error);
     }

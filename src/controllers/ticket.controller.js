@@ -4,6 +4,7 @@ import { TicketManager } from "../dao/service/ticket.service.js";
 import UserManager from "../dao/service/user.service.js";
 import { TicketDTO } from "../dto/ticketDTO.js";
 import CustomError from "../errors/custom.error.js";
+import {io} from '../app.js';
 
 const getAllTickets = async(req, res, next)=>{
     try {
@@ -22,6 +23,14 @@ const getTicketById = async(req, res, next)=>{
 
         if(!ticket) throw new CustomError('No data', 'No se encontró una venta para el id especificado', 4);
         return res.status(200).send({status:'success', payload:ticket});
+    } catch (error) {
+        next(error);
+    }
+}
+
+const getTicketRange = async(req, res, next)=>{
+    try {
+        
     } catch (error) {
         next(error);
     }
@@ -49,6 +58,9 @@ const createTicket = async(req, res, next)=>{
             const finded = productos.find(p => p._id.equals(cart.products[index].product._id));
             if(finded){
                 const newQuantity = finded.stock - cart.products[index].quantity;
+                if(newQuantity <= 2){
+                    io.emit('lowstock', {prod:finded._id});
+                }
                 await ProductManager.update(finded._id, 'stock', newQuantity);
             }
         }

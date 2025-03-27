@@ -16,8 +16,10 @@ const getAll = async(req, res, next)=>{
 
 const getProductQuery = async(req, res, next)=>{
     try {
-        const {query} = req.query;
-        const productos = await ProductManager.getAll(query);
+        const {query, filter, valueFilter} = req.query;
+        console.log(req.query)
+        const productos = await ProductManager.getAll(query, filter, valueFilter);
+        // console.log(productos)
         if(!productos){
             throw new CustomError('No data', 'No hay productos disponibles', 4);
             // const prodsFilter = productos.filter((prod) => prod.title.includes(query));
@@ -90,6 +92,18 @@ const updateProduct = async(req, res, next)=>{
     }
 }
 
+const getLowStockProducts = async(req, res, next)=>{
+    try {
+        const products = await ProductManager.getSearch();
+        const lowStock = products.filter(prods =>{
+            if(prods.stock <= 2) return prods._id;
+        });
+        return res.status(200).send({status:'success', payload:lowStock});
+    } catch (error) {
+        next(error);
+    }
+}
+
 const deleteProduct = async(req, res, next)=>{
     try {
         const {pid} = req.params;
@@ -101,4 +115,4 @@ const deleteProduct = async(req, res, next)=>{
     }
 }
 
-export default {getProductQuery, createProduct, updateProduct, getProductById, updateAllProduct, deleteProduct, getAll};
+export default {getProductQuery, createProduct, updateProduct, getProductById, updateAllProduct, deleteProduct, getAll, getLowStockProducts};

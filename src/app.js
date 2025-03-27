@@ -183,3 +183,4 @@ io.on('connection', async (socket) => {
 mongoose.connect(config.databaseURL);
 
 app.use(handleErrors)
+export {io}
