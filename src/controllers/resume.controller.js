@@ -25,8 +25,22 @@ const getSummaryById = async(req, res, next)=>{
             product.ganancia = Number(product.total) - totalCostPrice;
             product.porcentajeGanancia = Number(((product.product.sellingPrice - product.product.costPrice) / product.product.costPrice) * 100);
         })
-        console.log(summary)
+
         return res.status(200).send({status:'success', payload:summary});
+    } catch (error) {
+        next(error);
+    }
+}
+
+const getActiveSummary = async(req, res, next)=>{
+    try {
+        const summaries = await ResumeManager.getSummaries();
+        const activeSummary = summaries.find(summary => !summary.finish_date);
+        if(activeSummary){
+            return res.status(200).send({status:'success', message:'Hay un resumen activo', payload:activeSummary});
+        } else {
+            return res.status(200).send({status:'success', message:'No hay resúmenes activos', payload:null});
+        }
     } catch (error) {
         next(error);
     }
@@ -153,4 +167,4 @@ const deleteExpense = async(req, res, next)=>{
 
 
 
-export default {createSummary, endDay, addExpense, deleteExpense, getSummaries, getSummaryById};
+export default {createSummary, endDay, addExpense, deleteExpense, getSummaries, getSummaryById, getActiveSummary};

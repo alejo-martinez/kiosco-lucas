@@ -17,12 +17,20 @@ export default class ResumeManager{
         return await resumeModel.findOne({date: date});
     }
 
+    static async updateResume(rid, field, value){
+        await resumeModel.updateOne({_id: rid}, {$set:{[field]:value}});
+    }
+
     static async getMonthResume(month, year){
         return await resumeModel.findOne({month: month, year: year}).lean();
     }
 
     static async getResumeById(id){
-        return await resumeModel.findOne({_id: id}).populate('init_date.seller').populate('finish_date.seller').lean();
+        return await resumeModel.findOne({_id: id}).populate('init_date.seller').populate('finish_date.seller').populate('tickets.ticket').populate({ path: 'tickets.ticket', populate: { path: 'seller' }}).lean();
+    }
+
+    static async addTicket(rid, tid){
+        return await resumeModel.updateOne({_id: rid}, {$push:{tickets:{ticket:tid}}});
     }
 
     static async getAllResumeByCat(cat, page){

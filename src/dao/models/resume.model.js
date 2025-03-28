@@ -14,7 +14,8 @@ const schema = new mongoose.Schema({
     month: {type: Number},
     year: {type: Number},
     utilityExpenses: {type:[{expense: String, amount: Number}], default: []},
-    sales: Number
+    sales: Number,
+    tickets: {type:[{ticket: {type: mongoose.Schema.Types.ObjectId, ref:'tickets'}}], default:[]}
 });
 
 schema.plugin(mongoosePaginate);

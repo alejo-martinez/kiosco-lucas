@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 export class TicketManager {
     static async getAll(page, usuarioId) {
         
-        const { docs, hasPrevPage, hasNextPage, prevPage, nextPage, totalPages } = await ticketModel.paginate({seller: usuarioId}, { lean: true, page: page, limit: 14, sort: { created_at: -1 } });
+        const { docs, hasPrevPage, hasNextPage, prevPage, nextPage, totalPages } = await ticketModel.paginate({seller: usuarioId}, { lean: true, page: page, limit: 25, sort: { created_at: -1 } });
         return { docs, hasPrevPage, hasNextPage, prevPage, nextPage, totalPages };
     }
 
@@ -23,7 +23,7 @@ export class TicketManager {
     }
 
     static async createTicket(ticket) {
-        await ticketModel.create(ticket);
+        return await ticketModel.create(ticket);
     }
 
     static async getOrdersDate(initDate, finishDate) {

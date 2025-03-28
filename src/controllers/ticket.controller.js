@@ -5,6 +5,7 @@ import UserManager from "../dao/service/user.service.js";
 import { TicketDTO } from "../dto/ticketDTO.js";
 import CustomError from "../errors/custom.error.js";
 import {io} from '../app.js';
+import ResumeManager from "../dao/service/resume.service.js";
 
 const getAllTickets = async(req, res, next)=>{
     try {
@@ -41,7 +42,9 @@ const createTicket = async(req, res, next)=>{
         const userId = req.user;
 
         const user = await UserManager.getById(userId)
-        const {amount, payment_method} = req.body;
+        const {amount, payment_method, rid} = req.body;
+        if(!rid) throw new CustomError('Missing arguments', 'Debes iniciar el día primero', 2);
+        const activeResume = await ResumeManager.getResumeById(rid);
         if(!payment_method) throw new CustomError('Missing arguments', 'Selecciona un método de pago', 2);
         if(amount <= 0) throw new CustomError('Invalid amount', 'El total no puede ser 0 o menor que 0', 1);
         if(!user) throw new CustomError('Sesion expired', 'Sesión expirada, volvé a iniciar sesión', 6);
@@ -52,7 +55,15 @@ const createTicket = async(req, res, next)=>{
             productsCart.push({product: {title: prod.product.title, sellingPrice: prod.product.sellingPrice, id: prod.product._id, code: prod.product.code, costPrice: prod.product.costPrice }, quantity: prod.quantity, totalPrice: prod.totalPrice });
         })
         const ticket = new TicketDTO(productsCart, amount, user._id, payment_method);
-        await TicketManager.createTicket(ticket);
+        const newTicket = await TicketManager.createTicket(ticket);
+        // const activeResume = await ResumeManager.getResumeById(rid);
+        const totalSales = activeResume.sales;
+        const partialTotal = activeResume.amount;
+        const newTotal = Number(partialTotal) + Number(amount);
+        const newTotalSales = Number(totalSales) + 1;
+        await ResumeManager.addTicket(rid, newTicket._id)
+        await ResumeManager.updateResume(rid, 'sales', newTotalSales);
+        await ResumeManager.updateResume(rid, 'amount', newTotal);
         const productos = await ProductManager.getSearch();
         for (let index = 0; index < cart.products.length; index++) {
             const finded = productos.find(p => p._id.equals(cart.products[index].product._id));
