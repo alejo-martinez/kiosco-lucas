@@ -144,7 +144,7 @@ io.on('connection', async (socket) => {
         if (!data.query) io.emit('result', { empty: true });
         else {
             const prodsFilter = products.filter((prod) => prod.title.toLowerCase().includes(data.query.toLowerCase()));
-            io.emit('resultTitle', { results: prodsFilter });
+            io.to(data.socketId).emit('resultTitle', { results: prodsFilter });
         }
     })
 

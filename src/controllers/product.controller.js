@@ -76,16 +76,24 @@ const updateProduct = async(req, res, next)=>{
             const newPrice = calculateSellingPrice(producto.percentage, value);
             await ProductManager.update(pid, field, value);
             await ProductManager.update(pid, 'sellingPrice', newPrice);
-            res.status(200).send({status:'success', message: 'Producto actualizado!'});
+            return res.status(200).send({status:'success', message: 'Producto actualizado!'});
         } else if(field === 'percentage'){
             const producto = await ProductManager.getById(pid);
             const newPrice = calculateSellingPrice(value, producto.costPrice);
             await ProductManager.update(pid, 'sellingPrice', newPrice);
             await ProductManager.update(pid, field, value);
-            res.status(200).send({status:'success', message: 'Producto actualizado!'});
-        } else{
+            return res.status(200).send({status:'success', message: 'Producto actualizado!'});
+        } else if(field === 'stock'){
+            const producto = await ProductManager.getById(pid);
+            producto.totalStock = Number(producto.totalStock) + Number(value);
+            producto.stock = Number(producto.stock) + Number(value);
+            const newProd = await ProductManager.updateFull(pid, producto);
+            console.log(newProd)
+            return res.status(200).send({status:'success', payload:newProd, message:'Stock actualizado!'})
+        } 
+        else{
             await ProductManager.update(pid, field, value);
-            res.status(200).send({status:'success', message: 'Producto actualizado!'});
+            return res.status(200).send({status:'success', message: 'Producto actualizado!'});
         }
     } catch (error) {
         next(error)
