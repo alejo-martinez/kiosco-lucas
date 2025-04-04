@@ -5,7 +5,7 @@ import { generateToken } from "../utils.js";
 const login = async (req, res, next) => {
     try {
         const user = req.user;
-        console.log(user)
+
         const accesToken = generateToken(user);
         return res.cookie('accesToken', accesToken, { maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: true, secure: true, sameSite: 'None' }).send({ status: 'success', message: 'Logueado !', payload: user });
     } catch (error) {

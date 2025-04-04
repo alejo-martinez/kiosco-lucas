@@ -1,7 +1,7 @@
 import typeError from "../errors/type.error.js";
 
 const sendErrorResponse = (res, statusCode, errorMessage) => {
-    res.status(statusCode).send({ status: 'error', error: errorMessage });
+    return res.status(statusCode).send({ status: 'error', error: errorMessage });
 };
 
 export default (err, req, res, next) => {

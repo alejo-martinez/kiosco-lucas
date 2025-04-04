@@ -5,7 +5,7 @@ import { adminUser, authToken } from "../middlewares/auth.middleware.js";
 const router = Router();
 
 router.get('/', authToken, adminUser, ticketController.getAllTickets);
-router.get('/:tid', ticketController.getTicketById);
+router.get('/:tid', authToken, ticketController.getTicketById);
 router.post('/create', authToken, ticketController.createTicket);
 
 export default router;

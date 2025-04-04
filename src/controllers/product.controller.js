@@ -17,9 +17,9 @@ const getAll = async(req, res, next)=>{
 const getProductQuery = async(req, res, next)=>{
     try {
         const {query, filter, valueFilter} = req.query;
-        console.log(req.query)
+        
         const productos = await ProductManager.getAll(query, filter, valueFilter);
-        // console.log(productos)
+        console.log(productos)
         if(!productos){
             throw new CustomError('No data', 'No hay productos disponibles', 4);
             // const prodsFilter = productos.filter((prod) => prod.title.includes(query));
@@ -88,7 +88,7 @@ const updateProduct = async(req, res, next)=>{
             producto.totalStock = Number(producto.totalStock) + Number(value);
             producto.stock = Number(producto.stock) + Number(value);
             const newProd = await ProductManager.updateFull(pid, producto);
-            console.log(newProd)
+
             return res.status(200).send({status:'success', payload:newProd, message:'Stock actualizado!'})
         } 
         else{

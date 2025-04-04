@@ -6,12 +6,16 @@ import UserManager from "../dao/service/user.service.js";
 export const authToken = (req, res, next) => {
     const token = cookieExtractor(req);
     if (!token) {
+        
         req.user = undefined;
         return next();
     }
     else {
         jwt.verify(token, config.jwtSecret, (error, credentials) => {
-            if (error) return res.status(403).send({status:'error', error: 'not authorized' })
+            if (error){
+                
+                return res.status(403).send({status:'error', error: 'Sesión expirada, vuelva a iniciar sesión' })
+            }
             else {
                 req.user = credentials.userId;
                 next()

@@ -1,21 +1,22 @@
-import {fileURLToPath} from 'url';
+import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import config from './config/config.js';
 
-export const cookieExtractor = (req) =>{
-    let token=null;
+
+export const cookieExtractor = (req) => {
+    let token = null;
     // console.log(req.cookies)
-    if(req && req.cookies){
+    if (req && req.cookies) {
         token = req.cookies.accesToken
     }
     return token;
 }
 
 
-export const formatDate = (date)=> {
-    const options = { 
+export const formatDate = (date) => {
+    const options = {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
@@ -25,8 +26,8 @@ export const formatDate = (date)=> {
 };
 
 
-export const formatDateWithHours = (date)=> {
-    const options = { 
+export const formatDateWithHours = (date) => {
+    const options = {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
@@ -39,7 +40,7 @@ export const formatDateWithHours = (date)=> {
 };
 
 export const generateToken = (user) => {
-    const token = jwt.sign({ userId: user._id }, config.jwtSecret, { expiresIn: '24h' });
+    const token = jwt.sign({ userId: user._id }, config.jwtSecret, { expiresIn: '30d' });
     return token;
 }
 
@@ -49,22 +50,22 @@ export const isValidPassword = (user, password) => {
     return bcrypt.compareSync(password, user.password);
 }
 
-export const calculateSellingPrice = (percentage, costPrice) =>{
-    const result =  Number(costPrice) * (1 + Number(percentage) / 100);
+export const calculateSellingPrice = (percentage, costPrice) => {
+    const result = Number(costPrice) * (1 + Number(percentage) / 100);
     return result.toFixed(2);
 }
 
-export const paymentMethod = (method) =>{
-    if(method === 'eft') return 'Efectivo';
-    if(method === 'mp') return 'Mercado Pago';
-    if(method === 'td') return 'Tarjeta de débito';
-    if(method === 'tc') return 'Tarjeta de crédito';
+export const paymentMethod = (method) => {
+    if (method === 'eft') return 'Efectivo';
+    if (method === 'mp') return 'Mercado Pago';
+    if (method === 'td') return 'Tarjeta de débito';
+    if (method === 'tc') return 'Tarjeta de crédito';
 }
 
 const __filename = fileURLToPath(import.meta.url);
 export const __dirname = dirname(__filename);
 
-export const returnMonth = (month)=>{
+export const returnMonth = (month) => {
     const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
     return months[month];
 }
