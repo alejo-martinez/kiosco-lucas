@@ -13,9 +13,9 @@ const schema = new mongoose.Schema({
     initAmount: {type: Number},
     month: {type: Number},
     year: {type: Number},
-    utilityExpenses: {type:[{expense: String, amount: Number}], default: []},
     sales: Number,
-    tickets: {type:[{ticket: {type: mongoose.Schema.Types.ObjectId, ref:'tickets'}}], default:[]}
+    tickets: {type:[{ticket: {type: mongoose.Schema.Types.ObjectId, ref:'tickets'}}], default:[]},
+    expenses: {type:[{expense: {type: mongoose.Schema.Types.ObjectId, ref: 'expenses'}}], default:[]}
 });
 
 schema.plugin(mongoosePaginate);

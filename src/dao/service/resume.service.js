@@ -9,8 +9,8 @@ export default class ResumeManager{
         return await resumeModel.find().lean();
     }
 
-    static async endDayResume(amount, products, date, id, sales, methods, userId){
-        await resumeModel.updateOne({_id: id}, {amount: amount, products: products, finish_date: {end: date, seller: userId}, sales: sales, amount_per_method: methods});
+    static async endDayResume(date, id, userId){
+        await resumeModel.updateOne({_id: id}, {finish_date: {end: date, seller: userId}});
     }
 
     static async getTodayResume(date){
@@ -26,7 +26,7 @@ export default class ResumeManager{
     }
 
     static async getResumeById(id){
-        return await resumeModel.findOne({_id: id}).populate('init_date.seller').populate('finish_date.seller').populate('tickets.ticket').populate({ path: 'tickets.ticket', populate: { path: 'seller' }}).lean();
+        return await resumeModel.findOne({_id: id}).populate('init_date.seller').populate('finish_date.seller').populate('tickets.ticket').populate({ path: 'tickets.ticket', populate: { path: 'seller' }}).populate({path: 'expenses.expense', populate: [{path:'product'}, {path:'user'}]}).lean();
     }
 
     static async addTicket(rid, tid){
@@ -46,7 +46,11 @@ export default class ResumeManager{
     }
 
     static async addExpense(id, data){
-        await resumeModel.updateOne({_id : id }, {$push:{utilityExpenses: data}});
+        await resumeModel.updateOne({_id : id }, {$push:{expenses: data}});
+    }
+
+    static async updateFull(id, resume){
+        return await resumeModel.findOneAndUpdate({_id: id}, resume);
     }
 
     static async deleteExpense(id, index){

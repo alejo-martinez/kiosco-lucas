@@ -103,39 +103,8 @@ const endDay = async(req, res, next) =>{
         const user = req.user;
         const summaryNow = await ResumeManager.getResumeById(rid);
         const date = new Date();
-        const orders = await TicketManager.getOrdersDate(summaryNow.init_date.init, date);
-        const arrayProds = [];
-        const arrayMethods = [];
-        // const sellsPerUser = [];
-        let totalAmount = 0;
-        orders.forEach(order =>{
-            totalAmount += Number(order.amount);
-            // const userExist = sellsPerUser.findIndex(user => user.seller === order.seller);
-            // if(userExist >= 0){
-            //     sellsPerUser[userExist]
-            // }
-            const existMethod = arrayMethods.findIndex(method => method.method === order.payment_method);
-            if(existMethod !== -1){
-                arrayMethods[existMethod].amount += Number(order.amount);
-            } else{
-                arrayMethods.push({method: order.payment_method, amount: Number(order.amount)});
-            }
-        
-            order.products.forEach(producto=>{
-                const existProd = arrayProds.findIndex(prod => prod.product.id === producto.product.id);
-                if(existProd !== -1){
-                    arrayProds[existProd].quantity += Number(producto.quantity);
-                    arrayProds[existProd].total += Number(producto.totalPrice);
-                }else{
-                    arrayProds.push({product: {id: producto.product.id, title: producto.product.title, code: producto.product.code, costPrice: producto.product.costPrice, sellingPrice: producto.product.sellingPrice}, quantity: producto.quantity, total: producto.totalPrice});
-                }
-            })
-        })
-        arrayMethods.forEach(meth =>{
-            meth.amount = meth.amount.toFixed(2)
-        })
-        totalAmount = totalAmount.toFixed(2);
-        await ResumeManager.endDayResume(totalAmount, arrayProds, date, rid, orders.length, arrayMethods, user);
+        await ResumeManager.endDayResume(date, rid, user)
+
         return res.status(200).send({status:'success', message: 'Día terminado !', resumeId: rid})
     } catch (error) {
         next(error);

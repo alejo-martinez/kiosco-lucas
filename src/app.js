@@ -19,6 +19,7 @@ import cartRouter from './routes/cart.router.js';
 import ticketRouter from './routes/ticket.router.js';
 import userRouter from './routes/user.router.js';
 import resumeRouter from './routes/resume.router.js';
+import expenseRouter from './routes/expense.router.js';
 
 import config from "./config/config.js";
 
@@ -72,6 +73,7 @@ app.use('/api/cart', cartRouter);
 app.use('/api/ticket', ticketRouter);
 app.use('/api/user', userRouter);
 app.use('/api/resume', resumeRouter);
+app.use('/api/expense', expenseRouter)
 // app.use('/', viewsRouter);
 
 app.engine('handlebars', handlebars.engine());
