@@ -9,6 +9,7 @@ const getSummaries = async(req, res, next)=>{
         const {page=1} = req.query;
         const summaries = await ResumeManager.getAllResumeByCat(cat, page);
         if(!summaries) throw new CustomError('No data', 'No hay resúmenes disponibles', 4);
+        // console.log(summaries)
         return res.status(200).send({status:'success', payload:summaries});
     } catch (error) {
         next(error);
@@ -53,7 +54,9 @@ const createSummary = async(req, res, next)=>{
         if(cat === 'diary'){
             const user = req.user;
             const {initAmount} = req.body;
-            const newResume = await ResumeManager.createResume({init_date: {init: date, seller: user}, category: cat, initAmount: parseInt(initAmount), sales: 0});
+            const actualMonth = date.getMonth() + 1;
+            const actualYear = date.getFullYear();
+            const newResume = await ResumeManager.createResume({init_date: {init: date, seller: user}, category: cat, initAmount: parseInt(initAmount), sales: 0, month: actualMonth, year: actualYear});
             return res.status(200).send({status:'success', message: 'Día comenzado !', id: newResume._id});
         }
         if(cat === 'monthly'){
@@ -101,7 +104,7 @@ const endDay = async(req, res, next) =>{
     try {
         const {rid} = req.params;
         const user = req.user;
-        const summaryNow = await ResumeManager.getResumeById(rid);
+        // const summaryNow = await ResumeManager.getResumeById(rid);
         const date = new Date();
         await ResumeManager.endDayResume(date, rid, user)
 
@@ -129,6 +132,18 @@ const deleteExpense = async(req, res, next)=>{
         const {index} = req.body;
         await ResumeManager.deleteExpense(rid, index);
         return res.status(200).send({status:'success', message: 'Gasto eliminado!'})
+    } catch (error) {
+        next(error);
+    }
+}
+
+const getMonthResume = async(req, res, next)=>{
+    try {
+        const {month} = +req.params;
+        const date = new Date();
+        const actualYear = date.getFullYear();
+        const resumes = await ResumeManager.getMonthResume(month, actualYear);
+        
     } catch (error) {
         next(error);
     }

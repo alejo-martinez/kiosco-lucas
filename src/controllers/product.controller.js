@@ -17,9 +17,13 @@ const getAll = async(req, res, next)=>{
 const getProductQuery = async(req, res, next)=>{
     try {
         const {query, filter, valueFilter} = req.query;
-        
-        const productos = await ProductManager.getAll(query, filter, valueFilter);
-        console.log(productos)
+        let productos;
+        if(filter && valueFilter){
+             productos = await ProductManager.getAll({sort:{[filter]: Number(valueFilter)}, page:query});
+        } else{
+             productos = await ProductManager.getAll({page:query});
+        }
+        // console.log(productos)
         if(!productos){
             throw new CustomError('No data', 'No hay productos disponibles', 4);
             // const prodsFilter = productos.filter((prod) => prod.title.includes(query));

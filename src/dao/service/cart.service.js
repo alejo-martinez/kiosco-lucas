@@ -33,4 +33,8 @@ export default class CartManager{
     static async emptyCart(cid){
         return await cartModel.findOneAndUpdate({_id: cid}, {$set: { products: [] } }, {new:true});
     }
+
+    static async update(cid, update = {}, session = null){
+        return await cartModel.findOneAndUpdate({_id: cid},  update, {new: true, session});
+    }
 }

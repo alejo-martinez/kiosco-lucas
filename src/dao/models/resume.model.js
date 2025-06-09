@@ -18,6 +18,8 @@ const schema = new mongoose.Schema({
     expenses: {type:[{expense: {type: mongoose.Schema.Types.ObjectId, ref: 'expenses'}}], default:[]}
 });
 
+schema.index({ month: 1, year: 1 });
+
 schema.plugin(mongoosePaginate);
 
 export const resumeModel = mongoose.model(collection, schema);
