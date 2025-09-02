@@ -36,48 +36,51 @@ const getTicketById = async (req, res, next) => {
 const createTicket = async (req, res, next) => {
     const session = await mongoose.startSession();
     session.startTransaction();
+
     try {
         const userId = req.user;
+        const { amount, payment_method, rid } = req.body;
+
+        if (!rid) throw new CustomError('Missing arguments', 'Debes iniciar el día primero', 2);
+        if (!payment_method) throw new CustomError('Missing arguments', 'Selecciona un método de pago', 2);
+        if (amount <= 0) throw new CustomError('Invalid amount', 'El total no puede ser 0 o menor que 0', 1);
+
+        // Managers con conexión tenant
         const userManager = new UserManager(req.db);
         const resumeManager = new ResumeManager(req.db);
         const productManager = new ProductManager(req.db);
         const cartManager = new CartManager(req.db);
         const ticketManager = new TicketManager(req.db);
 
-        const user = await userManager.getById(userId)
-        const { amount, payment_method, rid } = req.body;
-        if (!rid) throw new CustomError('Missing arguments', 'Debes iniciar el día primero', 2);
-        const activeResume = await resumeManager.getResumeById(rid);
-        if (!payment_method) throw new CustomError('Missing arguments', 'Selecciona un método de pago', 2);
-        if (amount <= 0) throw new CustomError('Invalid amount', 'El total no puede ser 0 o menor que 0', 1);
+        const user = await userManager.getById(userId);
         if (!user) throw new CustomError('Sesion expired', 'Sesión expirada, volvé a iniciar sesión', 6);
+
         const cart = await cartManager.getCartById(user.cart._id);
-        if (cart.products.length === 0) throw new CustomError('No products', 'Debes agregar al menos un producto', 2)
+        if (!cart.products.length) throw new CustomError('No products', 'Debes agregar al menos un producto', 2);
 
+        const activeResume = await resumeManager.getResumeById(rid);
 
+        // Traer productos necesarios de la DB
+        const productIds = cart.products.map(p => p.product._id);
+        const dbProducts = await productManager.getSearch(
+            { _id: { $in: productIds } },
+            "title stock costPrice sellingPrice code",
+            session
+        );
 
         const productsCart = [];
-        const productIds = cart.products.map(p => p.product._id); // Armamos lista de IDs de productos
+        const lowStockProducts = [];
+        const bulkOps = [];
 
-        // 📦 Traemos los productos desde la DB (usamos $in y lean para eficiencia)
-        const dbProducts = await productManager.getSearch({ _id: { $in: productIds } }, null, session);
-        // const dbProducts = await productModel.find({ _id: { $in: productIds } })
-        //     .session(session)
-        //     .lean();
-
-        // 🔍 Recorremos el carrito para validar stock y preparar el array del ticket
         for (const item of cart.products) {
             const prod = item.product;
             const dbProduct = dbProducts.find(p => p._id.toString() === prod._id.toString());
-
             if (!dbProduct) throw new CustomError('Not found', `Producto ${prod.title} no encontrado`, 4);
 
             const remainingStock = dbProduct.stock - item.quantity;
-            if (remainingStock < 0) {
-                throw new CustomError('Stock error', `Stock insuficiente para ${prod.title}`, 5);
-            }
+            if (remainingStock < 0) throw new CustomError('Stock error', `Stock insuficiente para ${prod.title}`, 5);
 
-            // 🧾 Armamos la lista de productos para el ticket
+            // Preparar ticket
             productsCart.push({
                 product: {
                     title: prod.title,
@@ -90,41 +93,41 @@ const createTicket = async (req, res, next) => {
                 totalPrice: item.totalPrice,
             });
 
-            // 📢 Emitimos alerta si el stock es bajo
-            if (remainingStock <= 2) {
-                io.emit('lowstock', { prod: prod._id });
-            }
+            // Acumular para alertas
+            if (remainingStock <= 2) lowStockProducts.push(prod._id);
 
-            // ⚙️ Actualizamos el stock de forma atómica
-            await productManager.update(prod._id, { $inc: { stock: -item.quantity } }, session)
-
+            // Preparar bulkWrite de stock
+            bulkOps.push({
+                updateOne: {
+                    filter: { _id: prod._id },
+                    update: { $inc: { stock: -item.quantity } }
+                }
+            });
         }
 
-        // 🎫 Creamos el ticket en la base de datos
-        const ticket = new TicketDTO(productsCart, amount, user._id, payment_method);
-        const newTicket = await ticketManager.createTicket(ticket, session);
+        // Ejecutar actualizaciones de stock en bloque
+        await productManager.bulkWriteStock(bulkOps, session);
 
-        // 📈 Actualizamos el resumen (cantidad de ventas y monto total)
+        // Emitir alerta de stock bajo una sola vez
+        if (lowStockProducts.length) io.emit('lowstock', { products: lowStockProducts });
 
-        // ✅ Actualizar resumen con ventas, monto, tickets
+        // Crear ticket
+        const ticketData = new TicketDTO(productsCart, amount, user._id, payment_method);
+        const newTicket = await ticketManager.createTicket(ticketData, session);
+
+        // Actualizar resumen (tickets, ventas, amount)
         activeResume.sales += 1;
         activeResume.amount += amount;
         activeResume.tickets.push({ ticket: newTicket._id });
 
-        // 🧮 Actualizamos los productos del resumen (ventas del día)
+        // Actualizar productos en resumen
         for (const item of cart.products) {
             const prod = item.product;
-
-            const existingIndex = activeResume.products.findIndex(
-                p => p.product.id === prod._id.toString()
-            );
-
+            const existingIndex = activeResume.products.findIndex(p => p.product.id === prod._id.toString());
             if (existingIndex !== -1) {
-                // Ya existe, sumamos cantidades y total
                 activeResume.products[existingIndex].quantity += item.quantity;
                 activeResume.products[existingIndex].total += item.totalPrice;
             } else {
-                // Nuevo producto, lo agregamos
                 activeResume.products.push({
                     product: {
                         title: prod.title,
@@ -139,7 +142,7 @@ const createTicket = async (req, res, next) => {
             }
         }
 
-        // 💳 Actualizamos el método de pago utilizado
+        // Actualizar métodos de pago
         const methodIndex = activeResume.amount_per_method.findIndex(m => m.method === payment_method);
         if (methodIndex !== -1) {
             activeResume.amount_per_method[methodIndex].amount += amount;
@@ -147,36 +150,28 @@ const createTicket = async (req, res, next) => {
             activeResume.amount_per_method.push({ method: payment_method, amount });
         }
 
-        // 💾 Guardamos el resumen con todos los cambios
-        await resumeManager.updateFull(activeResume._id, activeResume, session)
-        // await activeResume.save({ session });
+        // Ejecutar actualizaciones en paralelo
+        await Promise.all([
+            resumeManager.updateFull(activeResume._id, activeResume, session),
+            cartManager.update(user.cart._id, { $set: { products: [] } }, session)
+        ]);
 
-        // 🧹 Vaciamos el carrito del usuario
-        const updatedCart = await cartManager.update(user.cart._id, { $set: { products: [] } }, session);
-        // await cartModel.findByIdAndUpdate(
-        //     user.cart._id,
-        //     { $set: { products: [] } },
-        //     { session }
-        // );
-
-        // ✅ Confirmamos la transacción (todo se guarda)
         await session.commitTransaction();
         session.endSession();
 
-        console.log(updatedCart)
-        // 📦 Respondemos con éxito y el ID del ticket creado
         return res.status(200).send({
             status: 'success',
             message: 'Pago realizado!',
-            payload: updatedCart
+            payload: newTicket
         });
 
     } catch (error) {
-        console.log(error)
+        console.error("Error creando ticket:", error);
         await session.abortTransaction();
         session.endSession();
         next(error);
     }
-}
+};
+
 
 export default { getAllTickets, createTicket, getTicketById };
