@@ -1,9 +1,12 @@
 
-import { getResumeModel } from "../models/factory.js";
+import { getExpenseModel, getResumeModel, getTicketModel, getUserModel } from "../models/factory.js";
 
 export default class ResumeManager {
     constructor(connection) {
         this.Resume = getResumeModel(connection)
+        this.Ticket = getTicketModel(connection);
+        this.User = getUserModel(connection);
+        this.Expense = getExpenseModel(connection);
     }
 
     async createResume(resume) {

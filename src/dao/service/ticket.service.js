@@ -1,11 +1,12 @@
 
-import { getTicketModel } from "../models/factory.js";
+import { getTicketModel, getUserModel } from "../models/factory.js";
 
 
 
 export class TicketManager {
     constructor(connection) {
         this.Ticket = getTicketModel(connection);
+        this.User = getUserModel(connection);
 
     }
     async getAll(page, usuarioId) {

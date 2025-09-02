@@ -1,10 +1,11 @@
 import CustomError from "../../errors/custom.error.js";
 
-import { getCartModel } from "../models/factory.js";
+import { getCartModel, getProductModel } from "../models/factory.js";
 
 export default class CartManager {
     constructor(connection) {
         this.Cart = getCartModel(connection);
+        this.Product = getProductModel(connection);
     }
     async createCart(arr) {
         return await this.Cart.create(arr);
