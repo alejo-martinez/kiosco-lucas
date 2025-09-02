@@ -1,50 +1,55 @@
-import { resumeModel } from "../models/resume.model.js";
+
+import { getResumeModel } from "../models/factory.js";
 
 export default class ResumeManager {
-    static async createResume(resume) {
-        return await resumeModel.create(resume);
+    constructor(connection) {
+        this.Resume = getResumeModel(connection)
     }
 
-    static async getSummaries() {
-        return await resumeModel.find().lean();
+    async createResume(resume) {
+        return await this.Resume.create(resume);
     }
 
-    static async endDayResume(date, id, userId) {
-        await resumeModel.updateOne({ _id: id }, { finish_date: { end: date, seller: userId } });
+    async getSummaries() {
+        return await this.Resume.find().lean();
     }
 
-    static async getTodayResume(date) {
-        return await resumeModel.findOne({ date: date });
+    async endDayResume(date, id, userId) {
+        await this.Resume.updateOne({ _id: id }, { finish_date: { end: date, seller: userId } });
     }
 
-    static async updateResume(filter, update = {}, session = null) {
+    async getTodayResume(date) {
+        return await this.Resume.findOne({ date: date });
+    }
+
+    async updateResume(filter, update = {}, session = null) {
         const options = session ? { session } : {};
-        return await resumeModel.updateOne(filter, update, options);
+        return await this.Resume.updateOne(filter, update, options);
     }
 
 
-    static async getMonthResume(month, year) {
-        return await resumeModel.findOne({ month: month, year: year }).lean();
+    async getMonthResume(month, year) {
+        return await this.Resume.findOne({ month: month, year: year }).lean();
     }
 
-    static async getResumeById(id) {
-        return await resumeModel.findOne({ _id: id }).populate('init_date.seller').populate('finish_date.seller').populate('tickets.ticket').populate({ path: 'tickets.ticket', populate: { path: 'seller' } }).populate({ path: 'expenses.expense', populate: [{ path: 'product' }, { path: 'user' }] }).lean();
+    async getResumeById(id) {
+        return await this.Resume.findOne({ _id: id }).populate('init_date.seller').populate('finish_date.seller').populate('tickets.ticket').populate({ path: 'tickets.ticket', populate: { path: 'seller' } }).populate({ path: 'expenses.expense', populate: [{ path: 'product' }, { path: 'user' }] }).lean();
     }
 
-    static async addTicket(rid, tid) {
-        return await resumeModel.updateOne({ _id: rid }, { $push: { tickets: { ticket: tid } } });
+    async addTicket(rid, tid) {
+        return await this.Resume.updateOne({ _id: rid }, { $push: { tickets: { ticket: tid } } });
     }
 
-    static async getAllResumeByCat(cat, page) {
+    async getAllResumeByCat(cat, page) {
         if (cat === 'diary') {
-            const { docs, hasPrevPage, hasNextPage, prevPage, nextPage, totalPages } = await resumeModel.paginate({ category: cat }, { lean: true, limit: 12, page, sort: { init_date: -1 } });
+            const { docs, hasPrevPage, hasNextPage, prevPage, nextPage, totalPages } = await this.Resume.paginate({ category: cat }, { lean: true, limit: 12, page, sort: { init_date: -1 } });
             return { docs, hasPrevPage, hasNextPage, prevPage, nextPage, totalPages, page };
         }
         if (cat === 'monthly') {
             const now = new Date();
             const currentMonth = now.getMonth() + 1; // porque en JS enero es 0
             const currentYear = now.getFullYear();
-            const list = await resumeModel.aggregate([
+            const list = await this.Resume.aggregate([
                 {
                     $group: {
                         _id: { month: '$month', year: '$year' },
@@ -81,27 +86,21 @@ export default class ResumeManager {
             ]);
 
             return list;
-            // const date = new Date();
-            // const actualMonth = date.getMonth() + 1;
-            // const actualYear = date.getFullYear();
-            // const { docs, hasPrevPage, hasNextPage, prevPage, nextPage, totalPages } = await resumeModel.paginate({}, {lean: true, limit: 12, page, sort:{month:-1}});
-
-            // return {docs, hasPrevPage, hasNextPage, prevPage, nextPage, totalPages, page};
         }
     }
 
-    static async addExpense(id, data, session) {
-        await resumeModel.updateOne({ _id: id }, { $push: { expenses: data } }, {session});
+    async addExpense(id, data, session) {
+        await this.Resume.updateOne({ _id: id }, { $push: { expenses: data } }, { session });
     }
 
-    static async updateFull(id, resume, session = null) {
-        return await resumeModel.findOneAndUpdate({ _id: id }, resume).session(session);
+    async updateFull(id, resume, session = null) {
+        return await this.Resume.findOneAndUpdate({ _id: id }, resume).session(session);
     }
 
-    static async deleteExpense(id, index) {
-        const resume = await resumeModel.findOne({ _id: id }).lean();
+    async deleteExpense(id, index) {
+        const resume = await this.Resume.findOne({ _id: id }).lean();
         resume.utilityExpenses.splice(index, 1);
-        await resumeModel.updateOne({ _id: id }, { utilityExpenses: resume.utilityExpenses });
+        await this.Resume.updateOne({ _id: id }, { utilityExpenses: resume.utilityExpenses });
     }
 
 

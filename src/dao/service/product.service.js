@@ -1,8 +1,11 @@
-import { productModel } from "../models/product.model.js";
+
+import { getProductModel } from "../models/factory.js";
 
 export default class ProductManager {
-
-    static async getAll({ page = 1, limit = 12, filter = {}, sort = {}, search = '' }) {
+    constructor(connection) {
+        this.Product = getProductModel(connection);
+    }
+    async getAll({ page = 1, limit = 12, filter = {}, sort = {}, search = '' }) {
         const query = { ...filter };
 
         if (search) {
@@ -13,7 +16,7 @@ export default class ProductManager {
             ];
         }
         // console.log(sort)
-        const result = await productModel.paginate(query, {
+        const result = await this.Product.paginate(query, {
             lean: true,
             page,
             limit,
@@ -29,57 +32,57 @@ export default class ProductManager {
     /**
      * Buscar productos sin filtros ni paginación
      */
-    static async getSearch(filter = {}, projection = null, session = null) {
-        return await productModel.find(filter, projection).session(session).lean();
+    async getSearch(filter = {}, projection = null, session = null) {
+        return await this.Product.find(filter, projection).session(session).lean();
     }
 
     /**
      * Obtener producto por ID
      */
-    static async getById(id, projection = null, session = null) {
-        return await productModel.findById(id, projection).session(session).lean();
+    async getById(id, projection = null, session = null) {
+        return await this.Product.findById(id, projection).session(session).lean();
     }
 
     /**
      * Obtener un producto por clave genérica
      */
-    static async getBy(key, value, projection = null, session = null) {
-        return await productModel.findOne({ [key]: value }, projection).session(session).lean();
+    async getBy(key, value, projection = null, session = null) {
+        return await this.Product.findOne({ [key]: value }, projection).session(session).lean();
     }
 
     /**
      * Crear un producto nuevo
      */
-    static async create(prod, session = null) {
-        return await productModel.create([prod], { session });
+    async create(prod, session = null) {
+        return await this.Product.create([prod], { session });
     }
 
     /**
      * Reemplazar un producto completo
      */
-    static async updateFull(id, prod, session = null) {
-        return await productModel.findOneAndUpdate({ _id: id }, prod, { new: true, session });
+    async updateFull(id, prod, session = null) {
+        return await this.Product.findOneAndUpdate({ _id: id }, prod, { new: true, session });
     }
 
     /**
      * Actualizar un solo campo dinámico
      */
-    static async update(id, updates = {}, session = null) {
-        return await productModel.updateOne({ _id: id }, updates, { session });
+    async update(id, updates = {}, session = null) {
+        return await this.Product.updateOne({ _id: id }, updates, { session });
     }
 
     /**
      * Eliminar producto por ID
      */
-    static async delete(id, session = null) {
-        return await productModel.deleteOne({ _id: id }, { session });
+    async delete(id, session = null) {
+        return await this.Product.deleteOne({ _id: id }, { session });
     }
 
     /**
      * Descontar stock de forma segura (no permite stock negativo)
      */
-    static async discountStock(id, quantity, session = null) {
-        const result = await productModel.updateOne(
+    async discountStock(id, quantity, session = null) {
+        const result = await this.Product.updateOne(
             { _id: id, stock: { $gte: quantity } },
             { $inc: { stock: -quantity } },
             { session }

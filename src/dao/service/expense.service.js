@@ -1,7 +1,11 @@
-import { expenseModel } from "../models/expenses.model.js";
+
+import { getExpenseModel } from "../models/factory.js";
 
 export default class ExpenseService {
-    static async createExpense(expense, session){
-        return await expenseModel.create([expense], {session});
+    constructor(connection) {
+        this.Expense = getExpenseModel(connection);
+    }
+    async createExpense(expense, session) {
+        return await this.Expense.create([expense], { session });
     }
 }

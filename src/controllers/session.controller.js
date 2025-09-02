@@ -24,7 +24,8 @@ const register = async (req, res, next) => {
 const current = async (req, res, next) => {
     try {
         const userId = req.user;
-        const user = await UserManager.getById(userId);
+        const userManager = new UserManager(req.db);
+        const user = await userManager.getById(userId);
 
         return res.status(200).send({ status: 'success', payload: user });
     } catch (error) {
@@ -39,7 +40,7 @@ const logOut = async (req, res, next) => {
                 // res.send({ status: 'error', message: 'No pudimos cerrar la sesion: ' + error });
                 return next(error);
             }
-                res.clearCookie('accesToken', {sameSite:'None', secure:true}).send({ status: 'success', message: 'Sesión cerrada con éxito !' })
+            res.clearCookie('accesToken', { sameSite: 'None', secure: true }).send({ status: 'success', message: 'Sesión cerrada con éxito !' })
         })
     } catch (error) {
         next(error);

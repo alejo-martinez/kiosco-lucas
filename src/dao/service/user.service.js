@@ -1,37 +1,41 @@
 import { createHash } from "../../utils.js";
-import { userModel } from "../models/user.model.js";
+import { getUserModel } from "../models/factory.js";
 
-export default class UserManager{
-    static async getAll(){
-        return await userModel.find().lean();
+
+export default class UserManager {
+    constructor(connection) {
+        this.User = getUserModel(connection);
+    }
+    async getAll() {
+        return await this.User.find().lean();
     }
 
-    static async getById(id){
-        return await userModel.findById(id).lean();
+    async getById(id) {
+        return await this.User.findById(id).lean();
     }
 
-    static async getBy(key, value){
-        return await userModel.findOne({[key]:value}).lean();
+    async getBy(key, value) {
+        return await this.User.findOne({ [key]: value }).lean();
     }
 
-    static async getWithPassword(username){
-        return await userModel.findOne({user_name: username}).select('+password');
+    async getWithPassword(username) {
+        return await this.User.findOne({ user_name: username }).select('+password');
     }
 
-    static async create(user){
-        await userModel.create(user);
+    async create(user) {
+        await this.User.create(user);
     }
 
-    static async update(id, key, value){
-        if(key === 'password'){
-            await userModel.updateOne({_id: id}, {$set: {[key]: createHash(value)}});
-        }else{
-            await userModel.updateOne({_id: id}, {$set: {[key]: value}});
+    async update(id, key, value) {
+        if (key === 'password') {
+            await this.User.updateOne({ _id: id }, { $set: { [key]: createHash(value) } });
+        } else {
+            await this.User.updateOne({ _id: id }, { $set: { [key]: value } });
         }
     }
 
-    static async delete(id){
-        await userModel.deleteOne({_id: id});
+    async delete(id) {
+        await this.User.deleteOne({ _id: id });
     }
 
 }

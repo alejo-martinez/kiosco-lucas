@@ -1,35 +1,39 @@
-import { cartModel } from "../models/cart.model.js";
-import { ticketModel } from "../models/ticket.model.js";
-import mongoose from "mongoose";
+
+import { getTicketModel } from "../models/factory.js";
+
+
 
 export class TicketManager {
-    static async getAll(page, usuarioId) {
+    constructor(connection) {
+        this.Ticket = getTicketModel(connection);
+
+    }
+    async getAll(page, usuarioId) {
         const numericPage = Number(page);
-        console.log(numericPage)
-        const { docs, hasPrevPage, hasNextPage, prevPage, nextPage, totalPages } = await ticketModel.paginate({ seller: usuarioId }, { lean: true, page: numericPage | 1, limit: 25, sort: { created_at: -1 } });
+        const { docs, hasPrevPage, hasNextPage, prevPage, nextPage, totalPages } = await this.Ticket.paginate({ seller: usuarioId }, { lean: true, page: numericPage | 1, limit: 25, sort: { created_at: -1 } });
         return { docs, hasPrevPage, hasNextPage, prevPage, nextPage, totalPages, page };
     }
 
-    static async getById(id) {
-        return await ticketModel.findById(id).populate('seller').lean();
+    async getById(id) {
+        return await this.Ticket.findById(id).populate('seller').lean();
     }
 
-    static async getMonthOrders(date) {
+    async getMonthOrders(date) {
         const actualMonth = date.getMonth();
         const actualYear = date.getFullYear();
         const initDate = new Date(actualYear, actualMonth, 1);
         const endDate = new Date(actualYear, actualMonth + 1, 0);
         endDate.setHours(23, 59, 59, 999);
-        return await ticketModel.find({ created_at: { $gte: initDate, $lte: endDate } }).lean();
+        return await this.Ticket.find({ created_at: { $gte: initDate, $lte: endDate } }).lean();
     }
 
-    static async createTicket(ticket, session = null) {
-        const [createdTicket] = await ticketModel.create([ticket], { session });
+    async createTicket(ticket, session = null) {
+        const [createdTicket] = await this.Ticket.create([ticket], { session });
         return createdTicket;
     }
 
-    static async getOrdersDate(initDate, finishDate) {
+    async getOrdersDate(initDate, finishDate) {
 
-        return await ticketModel.find({ created_at: { $gte: initDate, $lt: finishDate } }).lean();
+        return await this.Ticket.find({ created_at: { $gte: initDate, $lt: finishDate } }).lean();
     }
 }

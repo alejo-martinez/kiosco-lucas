@@ -69,3 +69,33 @@ export const returnMonth = (month) => {
     const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
     return months[month];
 }
+
+export const calcularMasVendidos = (summary) => {
+    const contadorProductos = {};
+
+    summary.products.forEach(({ product, quantity }) => {
+        const id = product.id;
+
+        if (!contadorProductos[id]) {
+            contadorProductos[id] = {
+                ...product,
+                totalVendida: 0,
+            };
+        }
+
+        contadorProductos[id].totalVendida += quantity;
+    });
+
+    // Convertimos el objeto a array y lo ordenamos de mayor a menor por cantidad vendida
+    const productosOrdenados = Object.values(contadorProductos).sort(
+        (a, b) => b.totalVendida - a.totalVendida
+    );
+
+    // Top 1 más vendido
+    const masVendido = productosOrdenados[0];
+
+    return {
+        masVendido,
+        topVendidos: productosOrdenados.slice(0, 3), // por ejemplo top 5
+    };
+};
