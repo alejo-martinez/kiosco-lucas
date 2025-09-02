@@ -75,6 +75,7 @@ export class TicketManager {
 
             return newTicket;
         } catch (err) {
+            console.error("Error en createTicket:", err);
             await session.abortTransaction();
             session.endSession();
             throw err;
@@ -82,84 +83,97 @@ export class TicketManager {
     }
 
     async prepareProducts(cart, session, db) {
-        const productIds = cart.products.map(p => p.product._id);
-        const productManager = new this.Product(db);
-        const dbProducts = await productManager.getSearch({ _id: { $in: productIds } }, "title stock costPrice sellingPrice code", session);
+        try {
 
-        const productsCart = [];
-        const lowStockProducts = [];
-        const bulkOps = [];
+            const productIds = cart.products.map(p => p.product._id);
+            const productManager = new this.Product(db);
+            const dbProducts = await productManager.getSearch({ _id: { $in: productIds } }, "title stock costPrice sellingPrice code", session);
 
-        for (const item of cart.products) {
-            const prod = item.product;
-            const dbProduct = dbProducts.find(p => p._id.toString() === prod._id.toString());
-            if (!dbProduct) throw new Error(`Producto ${prod.title} no encontrado`);
+            const productsCart = [];
+            const lowStockProducts = [];
+            const bulkOps = [];
 
-            const remainingStock = dbProduct.stock - item.quantity;
-            if (remainingStock < 0) throw new Error(`Stock insuficiente para ${prod.title}`);
+            for (const item of cart.products) {
+                const prod = item.product;
+                const dbProduct = dbProducts.find(p => p._id.toString() === prod._id.toString());
+                if (!dbProduct) throw new Error(`Producto ${prod.title} no encontrado`);
 
-            productsCart.push({
-                product: {
-                    title: prod.title,
-                    sellingPrice: prod.sellingPrice,
-                    id: prod._id,
-                    code: prod.code,
-                    costPrice: prod.costPrice,
-                },
-                quantity: item.quantity,
-                totalPrice: item.totalPrice,
-            });
+                const remainingStock = dbProduct.stock - item.quantity;
+                if (remainingStock < 0) throw new Error(`Stock insuficiente para ${prod.title}`);
 
-            if (remainingStock <= 2) lowStockProducts.push(prod._id);
-
-            bulkOps.push({
-                updateOne: {
-                    filter: { _id: prod._id },
-                    update: { $inc: { stock: -item.quantity } }
-                }
-            });
-        }
-
-        return { productsCart, lowStockProducts, bulkOps };
-    }
-
-    async updateResume(activeResume, cart, newTicket, payment_method, amount, session, db) {
-        // Actualizar tickets
-        activeResume.sales += 1;
-        activeResume.amount += amount;
-        activeResume.tickets.push({ ticket: newTicket._id });
-
-        // Actualizar productos en resumen
-        for (const item of cart.products) {
-            const prod = item.product;
-            const existingIndex = activeResume.products.findIndex(p => p.product.id === prod._id.toString());
-            if (existingIndex !== -1) {
-                activeResume.products[existingIndex].quantity += item.quantity;
-                activeResume.products[existingIndex].total += item.totalPrice;
-            } else {
-                activeResume.products.push({
+                productsCart.push({
                     product: {
                         title: prod.title,
                         sellingPrice: prod.sellingPrice,
                         id: prod._id,
+                        code: prod.code,
                         costPrice: prod.costPrice,
-                        code: prod.code
                     },
                     quantity: item.quantity,
-                    total: item.totalPrice
+                    totalPrice: item.totalPrice,
+                });
+
+                if (remainingStock <= 2) lowStockProducts.push(prod._id);
+
+                bulkOps.push({
+                    updateOne: {
+                        filter: { _id: prod._id },
+                        update: { $inc: { stock: -item.quantity } }
+                    }
                 });
             }
-        }
 
-        // Actualizar métodos de pago
-        const methodIndex = activeResume.amount_per_method.findIndex(m => m.method === payment_method);
-        if (methodIndex !== -1) {
-            activeResume.amount_per_method[methodIndex].amount += amount;
-        } else {
-            activeResume.amount_per_method.push({ method: payment_method, amount });
+            return { productsCart, lowStockProducts, bulkOps };
+        } catch (error) {
+            console.error("Error preparando productos:", error);
+            throw error;
         }
-        const resumeManager = new this.Resume(db);
-        await resumeManager.updateFull(activeResume._id, activeResume, session);
+    }
+
+    async updateResume(activeResume, cart, newTicket, payment_method, amount, session, db) {
+        try {
+
+
+            // Actualizar tickets
+            activeResume.sales += 1;
+            activeResume.amount += amount;
+            activeResume.tickets.push({ ticket: newTicket._id });
+
+            // Actualizar productos en resumen
+            for (const item of cart.products) {
+                const prod = item.product;
+                const existingIndex = activeResume.products.findIndex(p => p.product.id === prod._id.toString());
+                if (existingIndex !== -1) {
+                    activeResume.products[existingIndex].quantity += item.quantity;
+                    activeResume.products[existingIndex].total += item.totalPrice;
+                } else {
+                    activeResume.products.push({
+                        product: {
+                            title: prod.title,
+                            sellingPrice: prod.sellingPrice,
+                            id: prod._id,
+                            costPrice: prod.costPrice,
+                            code: prod.code
+                        },
+                        quantity: item.quantity,
+                        total: item.totalPrice
+                    });
+                }
+            }
+
+            // Actualizar métodos de pago
+            const methodIndex = activeResume.amount_per_method.findIndex(m => m.method === payment_method);
+            if (methodIndex !== -1) {
+                activeResume.amount_per_method[methodIndex].amount += amount;
+            } else {
+                activeResume.amount_per_method.push({ method: payment_method, amount });
+            }
+            const resumeManager = new this.Resume(db);
+            await resumeManager.updateFull(activeResume._id, activeResume, session);
+        } catch (error) {
+            console.error("Error actualizando resumen:", error);
+            throw error;
+        }
     }
 
     async getOrdersDate(initDate, finishDate, db) {
