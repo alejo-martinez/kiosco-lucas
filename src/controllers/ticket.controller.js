@@ -36,7 +36,9 @@ const getTicketById = async (req, res, next) => {
 const createTicket = async (req, res, next) => {
     try {
         const ticketManager = new TicketManager(req.db);
+        console.log('arranco la transaccion')
         const newTicket = await ticketManager.createTicket(req.user.userId, req.body, req.db);
+        console.log('termino la transaccion')
         return res.status(200).send({
             status: 'success',
             message: 'Pago realizado!',
