@@ -27,8 +27,8 @@ export const authToken = (req, res, next) => {
 export const adminUser = async (req, res, next) => {
     const admin = 'admin';
     try {
-
-        const user = await UserManager.getById(req.user);
+        const userManager = new UserManager(req.db);
+        const user = await userManager.getById(req.user);
         if (user && user.role === admin) next();
         else res.render('error', { error: 'No tienes los permisos para ver esta página.' })
         // throw new Error( 'No tienes los permisos para realizar esta acción');
@@ -40,7 +40,8 @@ export const adminUser = async (req, res, next) => {
 export const godUser = async (req, res, next) => {
     const god = 'god';
     try {
-        const user = await UserManager.getById(req.user);
+        const userManager = new UserManager(req.db);
+        const user = await userManager.getById(req.user);
         if (user && user.role === god) next();
         else res.render('error', { error: 'No tienes los permisos para ver esta página.' })
         // throw new Error( 'No tienes los permisos para realizar esta acción');
