@@ -45,8 +45,6 @@ const createTicket = async (req, res, next) => {
 
     } catch (error) {
         console.error("Error creando ticket:", error);
-        await session.abortTransaction();
-        session.endSession();
         next(error);
     }
 };
