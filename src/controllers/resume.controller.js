@@ -7,7 +7,8 @@ const getSummaries = async (req, res, next) => {
     try {
         const { cat } = req.params;
         const { page = 1 } = req.query;
-        const summaries = await ResumeManager.getAllResumeByCat(cat, page);
+        const resumeManager = new ResumeManager(req.db);
+        const summaries = await resumeManager.getAllResumeByCat(cat, page);
         if (!summaries) throw new CustomError('No data', 'No hay resúmenes disponibles', 4);
         // console.log(summaries)
         return res.status(200).send({ status: 'success', payload: summaries });
@@ -19,7 +20,10 @@ const getSummaries = async (req, res, next) => {
 const getSummaryById = async (req, res, next) => {
     try {
         const { sid } = req.params;
-        const summary = await ResumeManager.getResumeById(sid);
+        const resumeManager = new ResumeManager(req.db);
+        const ticketManager = new TicketManager(req.db);
+        // const summary = await resumeManager.getResumeById(sid);
+        const summary = await resumeManager.getResumeById(sid);
         if (!summary) throw new CustomError('No data', 'No existe el resumen', 4);
         let gananciaBruta = 0;
         let porcentajeGananciaTotal = 0;
@@ -74,7 +78,8 @@ const getSummaryById = async (req, res, next) => {
 
 const getActiveSummary = async (req, res, next) => {
     try {
-        const summaries = await ResumeManager.getSummaries();
+        const resumeManager = new ResumeManager(req.db);
+        const summaries = await resumeManager.getSummaries();
         const activeSummary = summaries.find(summary => !summary.finish_date);
         if (activeSummary) {
             return res.status(200).send({ status: 'success', message: 'Hay un resumen activo', payload: activeSummary });
@@ -90,20 +95,22 @@ const createSummary = async (req, res, next) => {
     try {
         const { cat } = req.params;
         const date = new Date();
+        const resumeManager = new ResumeManager(req.db);
+        const ticketManager = new TicketManager(req.db);
         if (cat === 'diary') {
             const user = req.user;
             const { initAmount } = req.body;
             const actualMonth = date.getMonth() + 1;
             const actualYear = date.getFullYear();
-            const newResume = await ResumeManager.createResume({ init_date: { init: date, seller: user }, category: cat, initAmount: parseInt(initAmount), sales: 0, month: actualMonth, year: actualYear });
+            const newResume = await resumeManager.createResume({ init_date: { init: date, seller: user }, category: cat, initAmount: parseInt(initAmount), sales: 0, month: actualMonth, year: actualYear });
             return res.status(200).send({ status: 'success', message: 'Día comenzado !', id: newResume._id });
         }
         if (cat === 'monthly') {
             const year = date.getFullYear();
             const month = date.getMonth() + 1;
-            const summaryExist = await ResumeManager.getMonthResume(month, year);
+            const summaryExist = await resumeManager.getMonthResume(month, year);
             if (summaryExist) throw new CustomError('Data already exist', 'El resumen del mes ya fue creado', 6);
-            const orders = await TicketManager.getMonthOrders(date);
+            const orders = await ticketManager.getMonthOrders(date);
             const arrayProds = [];
             const arrayMethods = [];
             let totalAmount = 0;
@@ -130,7 +137,7 @@ const createSummary = async (req, res, next) => {
                 meth.amount = meth.amount.toFixed(2)
             })
             totalAmount = totalAmount.toFixed(2);
-            await ResumeManager.createResume({ amount: totalAmount, products: arrayProds, month: month, category: cat, year: year, sales: orders.length, amount_per_method: arrayMethods });
+            await resumeManager.createResume({ amount: totalAmount, products: arrayProds, month: month, category: cat, year: year, sales: orders.length, amount_per_method: arrayMethods });
             return res.status(200).send({ status: 'success', message: 'Resumen del mes creado !' })
         }
     } catch (error) {
@@ -143,9 +150,10 @@ const endDay = async (req, res, next) => {
     try {
         const { rid } = req.params;
         const user = req.user;
-        // const summaryNow = await ResumeManager.getResumeById(rid);
+        const resumeManager = new ResumeManager(req.db);
+        // const summaryNow = await resumeManager.getResumeById(rid);
         const date = new Date();
-        await ResumeManager.endDayResume(date, rid, user)
+        await resumeManager.endDayResume(date, rid, user)
 
         return res.status(200).send({ status: 'success', message: 'Día terminado !', resumeId: rid })
     } catch (error) {
@@ -158,7 +166,8 @@ const addExpense = async (req, res, next) => {
         const { rid } = req.params;
         const { expense, amount } = req.body;
         if (!expense || !amount) throw new CustomError('No data', 'Debes completar todos los campos', 2);
-        await ResumeManager.addExpense(rid, { expense, amount });
+        const resumeManager = new ResumeManager(req.db);
+        await resumeManager.addExpense(rid, { expense, amount });
         return res.status(200).send({ status: 'success', message: 'Gasto añadido!' });
     } catch (error) {
         next(error);
@@ -169,7 +178,8 @@ const deleteExpense = async (req, res, next) => {
     try {
         const { rid } = req.params;
         const { index } = req.body;
-        await ResumeManager.deleteExpense(rid, index);
+        const resumeManager = new ResumeManager(req.db);
+        await resumeManager.deleteExpense(rid, index);
         return res.status(200).send({ status: 'success', message: 'Gasto eliminado!' })
     } catch (error) {
         next(error);
@@ -181,7 +191,8 @@ const getMonthResume = async (req, res, next) => {
         const { month } = +req.params;
         const date = new Date();
         const actualYear = date.getFullYear();
-        const resumes = await ResumeManager.getMonthResume(month, actualYear);
+        const resumeManager = new ResumeManager(req.db);
+        const resumes = await resumeManager.getMonthResume(month, actualYear);
 
     } catch (error) {
         next(error);
