@@ -1,6 +1,7 @@
 
 import { getCartModel, getProductModel, getResumeModel, getTicketModel, getUserModel } from "../models/factory.js";
 import { io } from "../../app.js";
+import mongoose from "mongoose";
 
 export class TicketManager {
     constructor(connection) {
