@@ -16,7 +16,7 @@ export class TicketManager {
     }
 
     async getById(id) {
-        return await this.Ticket.findById(id).populate('seller').lean();
+        return await this.Ticket.findById(id).populate({ path: 'seller', model: this.User }).lean();
     }
 
     async getMonthOrders(date) {

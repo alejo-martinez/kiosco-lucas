@@ -19,20 +19,20 @@ export default class CartManager {
             prodAdded.quantity += Number(quantity);
             prodAdded.totalPrice += totalPrice.toFixed(2);
             await this.Cart.updateOne({ _id: cid, 'products.product': pid }, { $inc: { 'products.$.quantity': Number(quantity), 'products.$.totalPrice': totalPrice } })
-            return await this.Cart.findById(cid).populate('products.product').lean();
+            return await this.Cart.findById(cid).populate({ path: 'products.product', model: this.Product }).lean();
         } else {
             await this.Cart.findOneAndUpdate({ _id: cid }, { $push: { products: { product: pid, quantity: quantity, totalPrice: totalPrice.toFixed(2) } } })
-            return await this.Cart.findById(cid).populate('products.product').lean();
+            return await this.Cart.findById(cid).populate({ path: 'products.product', model: this.Product }).lean();
         }
     }
 
     async getCartById(id) {
-        return await this.Cart.findById(id).populate('products.product').lean();
+        return await this.Cart.findById(id).populate({ path: 'products.product', model: this.Product }).lean();
     }
 
     async removeProduct(cid, pid) {
         await this.Cart.updateOne({ _id: cid }, { $pull: { products: { product: pid } } });
-        return await this.Cart.findOne({ _id: cid }).populate("products.product");
+        return await this.Cart.findOne({ _id: cid }).populate({ path: "products.product", model: this.Product });
     }
 
     async emptyCart(cid) {

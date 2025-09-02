@@ -1,5 +1,5 @@
 
-import { getExpenseModel, getResumeModel, getTicketModel, getUserModel } from "../models/factory.js";
+import { getExpenseModel, getProductModel, getResumeModel, getTicketModel, getUserModel } from "../models/factory.js";
 
 export default class ResumeManager {
     constructor(connection) {
@@ -7,6 +7,7 @@ export default class ResumeManager {
         this.Ticket = getTicketModel(connection);
         this.User = getUserModel(connection);
         this.Expense = getExpenseModel(connection);
+        this.Product = getProductModel(connection);
     }
 
     async createResume(resume) {
@@ -36,7 +37,7 @@ export default class ResumeManager {
     }
 
     async getResumeById(id) {
-        return await this.Resume.findOne({ _id: id }).populate('init_date.seller').populate('finish_date.seller').populate('tickets.ticket').populate({ path: 'tickets.ticket', populate: { path: 'seller' } }).populate({ path: 'expenses.expense', populate: [{ path: 'product' }, { path: 'user' }] }).lean();
+        return await this.Resume.findOne({ _id: id }).populate({ path: 'init_date.seller', model: this.User }).populate({ path: 'finish_date.seller', model: this.User }).populate({ path: 'tickets.ticket', model: this.Ticket }).populate({ path: 'tickets.ticket', populate: { path: 'seller', model: this.User }, model: this.Ticket }).populate({ path: 'expenses.expense', modeL: this.Expense, populate: [{ path: 'product', model: this.Product }, { path: 'user', model: this.User }] }).lean();
     }
 
     async addTicket(rid, tid) {
