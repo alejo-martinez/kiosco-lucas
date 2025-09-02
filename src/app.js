@@ -43,6 +43,7 @@ const io = new Server(httpServer, {
     cors: {
         origin: [
             "http://localhost:3000",
+            "https://kiosco-lucas-front.vercel.app",
             "https://*.vercel.app"
         ],
         credentials: true
