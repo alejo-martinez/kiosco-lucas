@@ -34,7 +34,7 @@ export class TicketManager {
     async createTicket(userId, { amount, payment_method, rid }, db) {
         const session = await mongoose.startSession();
         session.startTransaction();
-
+        console.log('Iniciando transacción de ticket...');
         try {
             // 1️⃣ Validaciones iniciales
             if (!rid) throw new Error("Debes iniciar el día primero");
@@ -67,9 +67,9 @@ export class TicketManager {
             // 8️⃣ Actualizar resumen y carrito en paralelo
             await Promise.all([
                 this.updateResume(activeResume, cart, newTicket, payment_method, amount, session, db),
-                cartManager.clearCart(user.cart._id, session)
+                cartManager.emptyCart(user.cart._id, session)
             ]);
-
+            console.log('Transacción de ticket completada.');
             await session.commitTransaction();
             session.endSession();
 
@@ -84,7 +84,7 @@ export class TicketManager {
 
     async prepareProducts(cart, session, db) {
         try {
-
+            console.log('Preparando productos...')
             const productIds = cart.products.map(p => p.product._id);
             const productManager = new this.Product(db);
             const dbProducts = await productManager.getSearch({ _id: { $in: productIds } }, "title stock costPrice sellingPrice code", session);
@@ -122,7 +122,7 @@ export class TicketManager {
                     }
                 });
             }
-
+            console.log('Productos preparados');
             return { productsCart, lowStockProducts, bulkOps };
         } catch (error) {
             console.error("Error preparando productos:", error);
@@ -132,7 +132,7 @@ export class TicketManager {
 
     async updateResume(activeResume, cart, newTicket, payment_method, amount, session, db) {
         try {
-
+            console.log('Actualizando resumen...')
 
             // Actualizar tickets
             activeResume.sales += 1;
@@ -160,7 +160,7 @@ export class TicketManager {
                     });
                 }
             }
-
+            console
             // Actualizar métodos de pago
             const methodIndex = activeResume.amount_per_method.findIndex(m => m.method === payment_method);
             if (methodIndex !== -1) {
@@ -170,6 +170,7 @@ export class TicketManager {
             }
             const resumeManager = new this.Resume(db);
             await resumeManager.updateFull(activeResume._id, activeResume, session);
+            console.log('Resumen actualizado');
         } catch (error) {
             console.error("Error actualizando resumen:", error);
             throw error;

@@ -35,8 +35,8 @@ export default class CartManager {
         return await this.Cart.findOne({ _id: cid }).populate({ path: "products.product", model: this.Product });
     }
 
-    async emptyCart(cid) {
-        return await this.Cart.findOneAndUpdate({ _id: cid }, { $set: { products: [] } }, { new: true });
+    async emptyCart(cid, session = null) {
+        return await this.Cart.findOneAndUpdate({ _id: cid }, { $set: { products: [] } }, { new: true, session });
     }
 
     async update(cid, update = {}, session = null) {
