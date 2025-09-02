@@ -44,7 +44,7 @@ const io = new Server(httpServer, {
         origin: [
             "http://localhost:3000",
             "https://kiosco-lucas-front.vercel.app",
-            "https://*.vercel.app"
+            "https://kiosco-test.vercel.app"
         ],
         credentials: true
     }
@@ -92,11 +92,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const allowed = (config.corsOrigins || "").split(",").map(s => s.trim());
 app.use(cors({
-    origin(origin, cb) {
-        if (!origin) return cb(null, true);
-        if (allowed.some(a => origin.endsWith(a) || origin === a)) return cb(null, true);
+    origin: (origin, cb) => {
+        if (!origin) return cb(null, true); // permite requests tipo curl/postman
+        if (allowed.some(a => origin.endsWith(a) || origin === a)) {
+            return cb(null, true);
+        }
         return cb(new Error("Not allowed by CORS"));
-    }, credentials: true
+    },
+    credentials: true
 }));
 
 
