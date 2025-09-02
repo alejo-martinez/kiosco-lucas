@@ -21,7 +21,7 @@ const getSummaryById = async (req, res, next) => {
     try {
         const { sid } = req.params;
         const resumeManager = new ResumeManager(req.db);
-        const ticketManager = new TicketManager(req.db);
+
         // const summary = await resumeManager.getResumeById(sid);
         const summary = await resumeManager.getResumeById(sid);
         if (!summary) throw new CustomError('No data', 'No existe el resumen', 4);

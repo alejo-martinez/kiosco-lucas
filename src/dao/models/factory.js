@@ -72,6 +72,8 @@ productSchema.plugin(mongoosePaginate);
 resumeSchema.plugin(mongoosePaginate);
 ticketSchema.plugin(mongoosePaginate);
 
+resumeSchema.index({ month: 1, year: 1 });
+
 export const getProductModel = (conn) => {
     return conn.models.Product || conn.model(productCollection, productSchema);
 }

@@ -5,7 +5,7 @@ import ExpenseDTO from "../dto/expenseDTO.js";
 import ProductManager from "../dao/service/product.service.js";
 import mongoose from "mongoose";
 
-const createExpense = async(req, res, next)=>{
+const createExpense = async (req, res, next) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
@@ -14,22 +14,22 @@ const createExpense = async(req, res, next)=>{
     if (!productId || productId.length === 0 || !quantity) {
       throw new CustomError('Missing Data', 'Campos incompletos', 2);
     }
-
-    const prod = await ProductManager.getById(productId, null, session);
+    const productManager = new ProductManager(req.db);
+    const prod = await productManager.getById(productId, null, session);
     if (!prod) throw new CustomError('Not Found', 'Producto no encontrado', 4);
 
     const user = req.user;
     const date = new Date();
     const exp = new ExpenseDTO(productId, user, date, quantity);
-
-    const newExpense = await ExpenseService.createExpense(exp, session);
+    const expenseService = new ExpenseService(req.db);
+    const newExpense = await expenseService.createExpense(exp, session);
 
     const newStock = Number(prod.stock) - Number(quantity);
     if (newStock < 0) throw new CustomError('Stock Error', 'Stock insuficiente', 5);
+    const resumeManager = new ResumeManager(req.db);
+    await productManager.update(productId, { stock: newStock }, session);
 
-    await ProductManager.update(productId, {stock: newStock}, session);
-
-    await ResumeManager.addExpense(resumeId, { expense: newExpense._id }, session);
+    await resumeManager.addExpense(resumeId, { expense: newExpense._id }, session);
 
     await session.commitTransaction();
     session.endSession();
@@ -43,5 +43,5 @@ const createExpense = async(req, res, next)=>{
 };
 
 export default {
-    createExpense
+  createExpense
 }
