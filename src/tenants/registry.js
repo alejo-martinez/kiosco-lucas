@@ -15,6 +15,7 @@ const cache = new Map(); // slug -> { mongoUri, brand }
 export const getTenantConfig = async (slug) => {
     if (cache.has(slug)) return cache.get(slug);
     const t = await Tenant.findOne({ slug }).lean();
+    console.log('tenant config', t)
     if (!t) return null;
     cache.set(slug, { mongoUri: t.mongoUri, brand: t.brand || {} });
     return cache.get(slug);

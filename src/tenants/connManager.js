@@ -7,8 +7,9 @@ export const getTenantConnection = async (slug) => {
     if (!slug) throw new Error("Missing tenant slug");
 
     if (connCache.has(slug)) return connCache.get(slug);
-
+    console.log(slug);
     const cfg = await getTenantConfig(slug);
+    console.log(cfg)
     if (!cfg) throw Object.assign(new Error("Tenant not found"), { status: 404 });
 
     const conn = await mongoose.createConnection(cfg.mongoUri, {
