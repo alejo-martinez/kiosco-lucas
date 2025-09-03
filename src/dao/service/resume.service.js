@@ -37,7 +37,23 @@ export default class ResumeManager {
     }
 
     async getResumeById(id) {
-        return await this.Resume.findOne({ _id: id }).populate({ path: 'init_date.seller', model: this.User }).populate({ path: 'finish_date.seller', model: this.User }).populate({ path: 'tickets.ticket', model: this.Ticket }).populate({ path: 'tickets.ticket', populate: { path: 'seller', model: this.User }, model: this.Ticket }).populate({ path: 'expenses.expense', modeL: this.Expense, populate: [{ path: 'product', model: this.Product }, { path: 'user', model: this.User }] }).lean();
+        return await this.Resume.findOne({ _id: id })
+            .populate({ path: 'init_date.seller', model: this.User })
+            .populate({ path: 'finish_date.seller', model: this.User })
+            .populate({
+                path: 'tickets.ticket',
+                model: this.Ticket,
+                populate: { path: 'seller', model: this.User }
+            })
+            .populate({
+                path: 'expenses.expense',
+                model: this.Expense,
+                populate: [
+                    { path: 'product', model: this.Product },
+                    { path: 'user', model: this.User }
+                ]
+            })
+            .lean();
     }
 
     async addTicket(rid, tid) {

@@ -1,7 +1,9 @@
 
 import { getCartModel, getProductModel, getResumeModel, getTicketModel, getUserModel } from "../models/factory.js";
 import { io } from "../../app.js";
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
+import { getTenantConnection } from "../../tenants/connManager.js";
+import { TicketDTO } from "../../dto/ticketDTO.js";
 
 export class TicketManager {
     constructor(connection) {
@@ -19,7 +21,11 @@ export class TicketManager {
     }
 
     async getById(id) {
-        return await this.Ticket.findById(id).populate({ path: 'seller', model: this.User }).lean();
+        console.log(id)
+
+        const t = await this.Ticket.findById(id).populate({ path: 'seller', model: this.User }).lean();
+        console.log(t)
+        return t
     }
 
     async getMonthOrders(date) {
@@ -31,8 +37,10 @@ export class TicketManager {
         return await this.Ticket.find({ created_at: { $gte: initDate, $lte: endDate } }).lean();
     }
 
-    async createTicket(userId, { amount, payment_method, rid }, db) {
-        const session = await mongoose.startSession();
+    async createTicket(userId, { amount, payment_method, rid }, db, slug) {
+        // console.log(db)
+        const tenantConnection = await getTenantConnection(slug);
+        const session = await tenantConnection.startSession();
         session.startTransaction();
         console.log('Iniciando transacción de ticket...');
         try {
@@ -40,34 +48,46 @@ export class TicketManager {
             if (!rid) throw new Error("Debes iniciar el día primero");
             if (!payment_method) throw new Error("Selecciona un método de pago");
             if (amount <= 0) throw new Error("El total no puede ser 0 o menor que 0");
-            const cartManager = new this.Cart(db);
-            const productManager = new this.Product(db);
-            const resumeManager = new this.Resume(db);
-            const ticketManager = new this.Ticket(db);
+            const cartManager = this.Cart;
+            const productManager = this.Product;
+            const resumeManager = this.Resume;
+            const ticketManager = this.Ticket;
+            const userManager = this.User;
             // 2️⃣ Traer usuario y carrito
-            const user = await cartManager.getUser(userId, session);
-            const cart = await cartManager.getCartByUser(userId, session);
-            if (!cart.products.length) throw new Error("Debes agregar al menos un producto");
+            // console.log(userId)
+            const user = await userManager.findOne({ _id: userId }).populate({ path: 'cart', model: this.Cart }).session(session).lean();
+            const cart = await cartManager.findOne({ _id: user.cart._id }).populate({ path: 'products.product', model: this.Product }).session(session).lean();
+            console.log(cart)
+            if (!user) throw new Error("Usuario no encontrado");
+            if (!user.cart) throw new Error("Carrito no encontrado");
+            //
+            // const cart = await cartManager.getCartByUser(userId, session);
+            if (user.cart.products.length === 0) throw new Error("Debes agregar al menos un producto");
 
             // 3️⃣ Traer resumen activo
-            const activeResume = await resumeManager.getResumeById(rid, session);
+            const activeResume = await resumeManager.findOne({ _id: rid }).session(session).lean();
 
             // 4️⃣ Preparar productos y actualizar stock
             const { productsCart, lowStockProducts, bulkOps } = await this.prepareProducts(cart, session, db);
 
             // 5️⃣ Actualizar stock en bulk
-            await productManager.bulkWriteStock(bulkOps, session);
+            await productManager.bulkWrite(bulkOps, { session });
+            // await productManager.bulkWriteStock(bulkOps, session);
 
             // 6️⃣ Emitir alertas de stock bajo
             if (lowStockProducts.length) io.emit('lowstock', { products: lowStockProducts });
 
             // 7️⃣ Crear ticket
-            const newTicket = await ticketManager.createTicket({ productsCart, amount, userId, payment_method }, session);
+            const ticketDto = new TicketDTO(productsCart, amount, userId, payment_method);
+
+            const newTicket = await ticketManager.create(ticketDto, session);
+
 
             // 8️⃣ Actualizar resumen y carrito en paralelo
             await Promise.all([
-                this.updateResume(activeResume, cart, newTicket, payment_method, amount, session, db),
-                cartManager.emptyCart(user.cart._id, session)
+                this.updateResume(activeResume, cart, newTicket[0], payment_method, amount, session, db),
+                // cartManager.emptyCart(user.cart._id, session)
+                await cartManager.findOneAndUpdate({ _id: cart._id }, { $set: { products: [] } }, { new: true, session })
             ]);
             console.log('Transacción de ticket completada.');
             await session.commitTransaction();
@@ -86,8 +106,9 @@ export class TicketManager {
         try {
             console.log('Preparando productos...')
             const productIds = cart.products.map(p => p.product._id);
-            const productManager = new this.Product(db);
-            const dbProducts = await productManager.getSearch({ _id: { $in: productIds } }, "title stock costPrice sellingPrice code", session);
+            const productManager = this.Product;
+            const dbProducts = await productManager.find({ _id: { $in: productIds } }).session(session).lean();
+            // const dbProducts = await productManager.getSearch({ _id: { $in: productIds } }, "title stock costPrice sellingPrice code", session);
 
             const productsCart = [];
             const lowStockProducts = [];
@@ -132,22 +153,18 @@ export class TicketManager {
 
     async updateResume(activeResume, cart, newTicket, payment_method, amount, session, db) {
         try {
-            console.log('Actualizando resumen...')
+            console.log('Actualizando resumen...');
 
-            // Actualizar tickets
-            activeResume.sales += 1;
-            activeResume.amount += amount;
-            activeResume.tickets.push({ ticket: newTicket._id });
-
-            // Actualizar productos en resumen
+            // Construir productos actualizados
+            const updatedProducts = [...activeResume.products];
             for (const item of cart.products) {
                 const prod = item.product;
-                const existingIndex = activeResume.products.findIndex(p => p.product.id === prod._id.toString());
-                if (existingIndex !== -1) {
-                    activeResume.products[existingIndex].quantity += item.quantity;
-                    activeResume.products[existingIndex].total += item.totalPrice;
+                const index = updatedProducts.findIndex(p => p.product.id === prod._id.toString());
+                if (index !== -1) {
+                    updatedProducts[index].quantity += item.quantity;
+                    updatedProducts[index].total += item.totalPrice;
                 } else {
-                    activeResume.products.push({
+                    updatedProducts.push({
                         product: {
                             title: prod.title,
                             sellingPrice: prod.sellingPrice,
@@ -160,16 +177,27 @@ export class TicketManager {
                     });
                 }
             }
-            console
-            // Actualizar métodos de pago
-            const methodIndex = activeResume.amount_per_method.findIndex(m => m.method === payment_method);
+
+            // Actualizar amount_per_method
+            const updatedMethods = [...activeResume.amount_per_method];
+            const methodIndex = updatedMethods.findIndex(m => m.method === payment_method);
             if (methodIndex !== -1) {
-                activeResume.amount_per_method[methodIndex].amount += amount;
+                updatedMethods[methodIndex].amount += amount;
             } else {
-                activeResume.amount_per_method.push({ method: payment_method, amount });
+                updatedMethods.push({ method: payment_method, amount });
             }
-            const resumeManager = new this.Resume(db);
-            await resumeManager.updateFull(activeResume._id, activeResume, session);
+
+            // Ejecutar la actualización usando $inc y $push
+            await this.Resume.updateOne(
+                { _id: activeResume._id },
+                {
+                    $inc: { sales: 1, amount: amount },
+                    $push: { tickets: { ticket: newTicket._id } },
+                    $set: { products: updatedProducts, amount_per_method: updatedMethods }
+                },
+                { session }
+            );
+
             console.log('Resumen actualizado');
         } catch (error) {
             console.error("Error actualizando resumen:", error);

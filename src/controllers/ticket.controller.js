@@ -35,9 +35,12 @@ const getTicketById = async (req, res, next) => {
 
 const createTicket = async (req, res, next) => {
     try {
+        // const { slug } = req.params || req.headers['x-tenant'];
+
         const ticketManager = new TicketManager(req.db);
         console.log('arranco la transaccion')
-        const newTicket = await ticketManager.createTicket(req.user.userId, req.body, req.db);
+        console.log(req.user)
+        const newTicket = await ticketManager.createTicket(req.user, req.body, req.db, req.tenant.slug);
         console.log('termino la transaccion')
         return res.status(200).send({
             status: 'success',

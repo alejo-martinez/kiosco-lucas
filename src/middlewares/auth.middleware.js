@@ -2,6 +2,7 @@ import config from "../config/config.js";
 import jwt from 'jsonwebtoken';
 import { cookieExtractor } from "../utils.js";
 import UserManager from "../dao/service/user.service.js";
+import CustomError from "../errors/custom.error.js";
 
 export const authToken = (req, res, next) => {
     const token = cookieExtractor(req);
@@ -30,7 +31,7 @@ export const adminUser = async (req, res, next) => {
         const userManager = new UserManager(req.db);
         const user = await userManager.getById(req.user);
         if (user && user.role === admin) next();
-        else res.render('error', { error: 'No tienes los permisos para ver esta página.' })
+        else throw new CustomError('Unauthorized', 'No tienes los permisos para realizar esta acción', 3);
         // throw new Error( 'No tienes los permisos para realizar esta acción');
     } catch (error) {
         next(error);
@@ -43,7 +44,7 @@ export const godUser = async (req, res, next) => {
         const userManager = new UserManager(req.db);
         const user = await userManager.getById(req.user);
         if (user && user.role === god) next();
-        else res.render('error', { error: 'No tienes los permisos para ver esta página.' })
+        else throw new CustomError('Unauthorized', 'No tienes los permisos para realizar esta acción', 3);
         // throw new Error( 'No tienes los permisos para realizar esta acción');
     } catch (error) {
         next(error);
