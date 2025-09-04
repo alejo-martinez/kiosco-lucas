@@ -14,7 +14,7 @@ import CartManager from "./dao/service/cart.service.js";
 import { __dirname } from "./utils.js";
 
 import sessionRouter from './routes/session.router.js';
-
+import CustomError from "./errors/custom.error.js";
 import productRouter from './routes/product.router.js';
 import cartRouter from './routes/cart.router.js';
 import ticketRouter from './routes/ticket.router.js';
