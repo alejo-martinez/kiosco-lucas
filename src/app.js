@@ -131,7 +131,7 @@ io.on('connection', async (socket) => {
         try {
             const prodManager = new ProductManager(socket.data.db)
             const prod = await prodManager.getBy('code', Number(data.query));
-
+            console.log(prod)
             io.to(data.socketId).emit('resultCode', { producto: prod });
         } catch (error) {
             io.emit('errorCode', { error: error.message })
