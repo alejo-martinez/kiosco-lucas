@@ -121,7 +121,7 @@ io.on('connection', async (socket) => {
             const prodManager = new ProductManager(socket.data.db)
             const prod = await prodManager.getBy('code', Number(data.code));
             if (!prod) throw new CustomError('No data', 'No se encontró un producto', 4);
-            io.emit('resultCodeUpdate', { producto: prod });
+            io.to(data.socketId).emit('resultCodeUpdate', { producto: prod });
         } catch (error) {
             io.emit('errorCodeUpdate', { error: error.message })
         }
@@ -159,7 +159,7 @@ io.on('connection', async (socket) => {
                 total += Number(prod.totalPrice);
             });
             total = Number(total).toFixed(2);
-            io.emit('updatedCart', { cart: cart, total: total });
+            io.to(data.socketId).emit('updatedCart', { cart: cart, total: total });
 
         } catch (error) {
             socket.emit('errorUpdate', { error: error.message })
@@ -171,7 +171,7 @@ io.on('connection', async (socket) => {
             const prodManager = new ProductManager(socket.data.db)
             const prod = await prodManager.getBy('code', Number(data.code));
             if (!prod) throw new CustomError('No data', 'El producto no existe', 4);
-            io.emit('resultTitle', { results: [prod] });
+            io.to(data.socketId).emit('resultTitle', { results: [prod] });
         } catch (error) {
             socket.emit('errorUpdate', { error: error.message });
         }
@@ -201,7 +201,7 @@ io.on('connection', async (socket) => {
             const cart = await cartManager.addProduct(data.cid, data.pid, data.quantity, totalPrice);
             let total = 0;
             cart.products.forEach(prod => total += prod.totalPrice);
-            io.emit('updatedCart', { cart: cart, total: total });
+            io.to(data.socketId).emit('updatedCart', { cart: cart, total: total });
         } catch (error) {
             console.log(error);
             socket.emit('errorUpdate', error)
@@ -214,7 +214,7 @@ io.on('connection', async (socket) => {
             const cartUpdated = await cartManager.removeProduct(data.cid, data.pid);
             let total = 0;
             cartUpdated.products.forEach(prod => total += prod.totalPrice);
-            io.emit('removeSuccess', { cart: cartUpdated, total: total });
+            io.to(data.socketId).emit('removeSuccess', { cart: cartUpdated, total: total });
         } catch (error) {
 
             socket.emit('removeError', error);
