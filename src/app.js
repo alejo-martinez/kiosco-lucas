@@ -46,7 +46,8 @@ const io = new Server(httpServer, {
             "https://kiosco-lucas-front.vercel.app",
             "https://kiosco-test.vercel.app"
         ],
-        credentials: true
+        credentials: true,
+        methods: ["GET", "POST"]
     }
 });
 
